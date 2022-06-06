@@ -1,93 +1,50 @@
-from map import Map
 from queue import PriorityQueue
-from typing import Tuple
-import math
-from observer.observer import Observer
-from observer.subject import Subject
+from path_finder.map import Map
+from path_finder.sensor import Sensor
+from path_finder.executor import Executor
+from path_finder.const import *
 
 
-class PathFinder(Observer):
+class PathFinder:
 
-    def __init__(self, _subject: Subject):
-        super().__init__(_subject)
+    def __init__(self, _sensor: Sensor, _executor: Executor):
         self.open_queue = PriorityQueue()
         self.map = Map()
         self.start = (0, 0)
         self.goal = (0, 0)
-
-    def __get_key(self, y: int, x: int):
-        i, j = self.map.index_by_coors(y, x)
-        return min(self.map.vertexes[i][j].g, self.map.vertexes[i][j].rhs) + self.map.vertexes[i][j].h, \
-               min(self.map.vertexes[i][j].g, self.map.vertexes[i][j].rhs)
+        self.executor = _executor
+        self.sensor = _sensor
 
     def init_new_path(self, y_start: int, x_start: int, y_goal: int, x_goal: int):
-        self.start = (y_start, x_start)
-        self.goal = (y_goal, x_goal)
+        self.start = (y_goal, x_goal)
+        self.goal = (y_start, x_start)
         self.open_queue = PriorityQueue()
-        self.map.set_new_goal(y_goal, x_goal)
-        i, j = self.map.index_by_coors(y_start, x_start)
-        self.map.vertexes[i][j].rhs = 0
-        self.open_queue.put((self.__get_key(y_start, x_start), (y_start, x_start)))
-
-    def __get_minimal_priority(self) -> Tuple[int or float, int or float]:
-        if self.open_queue.empty():
-            return math.inf, math.inf
-        return self.open_queue.queue[0][0]
+        self.map.set_new_goal(y_start, x_start)
 
     def update_vertex(self, y_vertex: int, x_vertex: int):
-        y_start, x_start = self.start
-        i, j = self.map.index_by_coors(y_vertex, x_vertex)
-        _id = self.map.id_by_coors(y_vertex, x_vertex)
-
-        if y_start != y_vertex and x_start != x_vertex:
-
-            min_transition = math.inf
-
-            for _neighbour in self.map.get_neighbours(y_vertex, x_vertex):
-                _i, _j = self.map.index_by_coors(_neighbour[0], _neighbour[1])
-                __id = self.map.id_by_coors(_neighbour[0], _neighbour[1])
-                if min_transition < self.map.vertexes[_i][_j].g + self.map.costs[__id][_id]:
-                    min_transition = self.map.vertexes[_i][_j].g + self.map.costs[__id][_id]
-                    self.map.vertexes[i][j].pred = self.map.vertexes[_i][_j]
-
-            self.map.vertexes[i][j].rhs = min_transition
-
-        if (self.__get_key(y_vertex, x_vertex), (y_vertex, x_vertex)) in self.open_queue.queue:
-            self.open_queue.queue.remove((self.__get_key(y_vertex, x_vertex), (y_vertex, x_vertex)))
-
-        if self.map.vertexes[i][j].g != self.map.vertexes[i][j].rhs:
-            self.open_queue.put((self.__get_key(y_vertex, x_vertex), (y_vertex, x_vertex)))
+        pass
 
     def compute_path(self):
-        i, j = self.map.index_by_coors(*self.goal)
-
-        while self.__get_minimal_priority() < self.__get_key(*self.goal) or \
-                self.map.vertexes[i][j].rhs != self.map.vertexes[i][j].g:
-
-            _y, _x = self.open_queue.get()[1]
-            _i, _j = self.map.index_by_coors(_y, _x)
-
-            if self.map.vertexes[_i][_j].g > self.map.vertexes[_i][_j].rhs:
-                self.map.vertexes[_i][_j].g = self.map.vertexes[_i][_j].rhs
-            else:
-                self.map.vertexes[_i][_j].g = math.inf
-                self.update_vertex(_y, _x)
-
-            for _neighbour in self.map.get_neighbours(_y, _x):
-                self.update_vertex(*_neighbour)
+        pass
 
     def update(self):
-        # Stop path execution
-        # TODO: send stop to microcontroller_proxy
-        for (y, x) in self.subject.moved:
-            self.map.clear_vertex(y, x)
-            self.update_vertex(y, x)
-        for (y, x) in self.subject.objects:
-            self.map.obstacle_vertex(y, x)
-            self.update_vertex(y, x)
-
+        self.executor.stop()
+        new_obstacles = self.sensor.get_data()
+        for vertex in self.map.vertexes:
+            if vertex.state == STATE_CLEAR and (vertex.y, vertex.x) in new_obstacles:
+                self.map.obstacle_vertex(vertex.y, vertex.x)
+                self.update_vertex(vertex.y, vertex.x)
+            if vertex.state == STATE_OBSTACLE and (vertex.y, vertex.x) not in new_obstacles:
+                self.map.clear_vertex(vertex.y, vertex.x)
+                self.update_vertex(vertex.y, vertex.x)
         self.compute_path()
+        i, j = self.map.index_by_coors(*self.goal)
+        self.goal = self.map.vertexes[i][j].pred
+        self.executor.move_to(*self.goal)
 
-    def execute_path(self):
-        # TODO: translate vertexes path to orders and send orders to microcontroller_proxy
-        pass
+    def run(self):
+        while self.goal != self.start:
+            self.update()
+
+
+

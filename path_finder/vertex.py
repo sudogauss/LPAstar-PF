@@ -12,6 +12,7 @@ class Vertex:
         self.x = x
         self.y = y
         self.id = int(y / STEP) * (MAX_J + 1) + int(x / STEP)
+        self.state = STATE_CLEAR
 
     def heuristic(self, y: int, x: int) -> None:
         self.h = math.sqrt((y - self.y) ** 2 + (x - self.x) ** 2)

@@ -42,6 +42,10 @@ class Map:
 
     def __set_vertex_state(self, y: int, x: int, state: int) -> None:
         _id = self.id_by_coors(y, x)
+        i, j = self.index_by_coors(y, x)
+
+        self.vertexes[i][j] = state
+
         neighbours = self.get_neighbours(y, x)
         for (_y, _x) in neighbours:
             _neighbour_id = self.id_by_coors(_y, _x)
@@ -58,3 +62,7 @@ class Map:
 
     def obstacle_vertex(self, y: int, x: int) -> None:
         self.__set_vertex_state(y, x, STATE_OBSTACLE)
+
+    def get_vertex_state(self, y: int, x: int) -> int:
+        i, j = self.index_by_coors(y, x)
+        return self.vertexes[i][j].state
