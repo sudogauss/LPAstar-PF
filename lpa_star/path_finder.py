@@ -1,15 +1,12 @@
-from map import Map
 from queue import PriorityQueue
 from typing import Tuple
 import math
 from typing import Callable
-from path_finder.base_path_finder import BasePathFinder
-from observer.subject import Subject
-from path_finder.move_executor import MoveExecutor
-import thread
+from path_finder.path_finder import PathFinder
+from path_finder.executor import Executor
 
 
-class LPAStarPathFinder(BasePathFinder):
+class LPAStarPathFinder(PathFinder):
 
     def __init__(self, _subject: Subject, _move_executor: MoveExecutor):
         super().__init__(_subject, _move_executor)
@@ -77,10 +74,10 @@ class LPAStarPathFinder(BasePathFinder):
 
     def update(self):
         super().update()
-        for (y, x) in self.subject.moved:
+        for (y, x) in self.sensor.moved:
             self.map.clear_vertex(y, x)
             self.update_vertex(y, x)
-        for (y, x) in self.subject.objects:
+        for (y, x) in self.sensor.objects:
             self.map.obstacle_vertex(y, x)
             self.update_vertex(y, x)
 
