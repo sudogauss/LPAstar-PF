@@ -3,7 +3,7 @@ from lpa_star.exception.MapInitializationException import MapInitializationExcep
 from math import sqrt
 
 class GMap():
-    def __init__(self, obstacles: Iterable[Tuple[float, float, float]], params: Dict[int]) -> None:
+    def __init__(self, obstacles: Iterable[Tuple[float, float, float]], params: Dict[str, int]) -> None:
         self.width = self.__param_getter("width", params)
         self.height = self.__param_getter("height", params)
         self.resolution = self.__param_getter("resolution", params)
@@ -14,7 +14,7 @@ class GMap():
         self.free_case_value = self.__param_getter("free_case_value", params)
         self.obstacle_case_value = self.__param_getter("obstacle_case_value", params)
 
-        self.obstacles = self.__convert_obstacles_to_graph(obstacles)
+        self.obstacles = self.convert_obstacles_to_graph(obstacles)
 
         self.heuristics_multiplier = self.__param_getter("heuristics_multiplier", params)
 
@@ -23,7 +23,7 @@ class GMap():
             return params[param_name]
         raise MapInitializationException("Parameter required, but not provided: " + param_name)
 
-    def __convert_obstacles_to_grpah(obstacles: Iterable[Tuple[float, float, float]]) -> Iterable[Tuple[int ,int]]:
+    def convert_obstacles_to_graph(obstacles: Iterable[Tuple[float, float, float]]) -> Iterable[Tuple[int ,int]]:
         model_obstacles = []
         for obstacle in obstacles:
             x = obstacle[0]
@@ -49,13 +49,41 @@ class GMap():
     def get_transition_cost(self, _from: Tuple[int, int], _to: Tuple[int, int]) -> float:
         if abs(_from[0] - _to[0]) > 1 or abs(_from[1] - _to[1]) > 1:
             raise ImpossibleTransitionException("Impossible transition from (" + _from[0] + "," + _from[1] + ") to (" + _to[0] + "," + _to[1])
-        if  _to in self.obstacles:
+        if  _to in self.obstacles or _from in self.obstacles:
             return self.obstacle_case_value
         else:
             return self.free_case_value * sqrt(abs(_from[1] - _to[1]) + abs(_from[0] - _to[0])) 
+    
+    def get_neighbours(self, vertex: Tuple[int, int]) -> Iterable[Tuple[int, int]]:
+        i, j = vertex
+        neighbours = []
+        if i - 1 >= 0:
+            neighbours.append((i-1, j))
+            if j - 1 >= 0:
+                neighbours.append((i-1, j-1))
+            if j + 1 <= self.columns:
+                neighbours.append((i-1, j+1))
+        if i + 1 <= self.rows:
+            neighbours.append((i+1, j))
+            if j - 1 >= 0:
+                neighbours.append((i, j-1))
+                neighbours.append((i+1, j-1))
+            if j + 1 <= self.columns:
+                neighbours.append((i, j+1))
+                neighbours.append((i+1, j+1))
+
 
     def get_heurisitcs_cost(self, _from: Tuple[int, int], _to: Tuple[int, int]) -> float:
         return self.heurisitcs_multiplier * sqrt(abs(_from[1] - _to[1]) ** 2 + abs(_from[0] - _to[0]) ** 2)
+
+    def get_resolution(self) -> int:
+        return self.resolution
+
+    def get_obstacles(self) -> Iterable[Tuple[int, int]]:
+        return self.obstacles
+
+    def set_obstacles(self, _obstacles: Iterable[Tuple[int, int]]) -> None:
+        self.obstacles = _obstacles
 
 
     
