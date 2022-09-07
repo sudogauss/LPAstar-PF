@@ -5,6 +5,10 @@ __pycache__/
 
 #IDE
 
+#Sphinx
+
+doc/html
+
 .idea/
 
 # C extensions
