@@ -13,6 +13,11 @@ class PriorityQueue:
     def pop(self):
         return heapq.heappop(self.h)
 
+    def top_key(self):
+        if len(self.h) == 0:
+            raise EmptyQueueException
+        return self.h[0][0]
+
     def remove(self, value: extensions.comparable_t) -> None:
         pos = -1
         for i in len(self.h):
