@@ -77,7 +77,20 @@ class LPAStarPathFinder:
         if g[i][j] != rhs[i][j] self.discover_order.insert(self.__calculate_key(i, j), v)
 
     def __compute_shortest_path(self) -> Iterable[Tuple[int, int]]:
-        pass        
+        while ((self.discover_order.top_key() < self.__calculate_key(*self.goal)) or 
+            (rhs[self.goal[0]][self.goal[1]] != g[self.goal[0]][self.goal[1]])):
+            v = self.discover_order.pop()
+            i, j = v
+            if g[i][j] > rhs[i][j]:
+                g[i][j] = rhs[i][j]
+                for neighbour in self.map.get_neighbours(v):
+                    self.__update_vertex(neighbour)
+            else:
+                g[i][j] = int("inf")
+                for neighbour in self.map.get_neighbours(v):
+                    self.__update_vertex(neighbour)
+                self.__update_vertex(v)
+
 
     def __pause() -> None:
         time.sleep(self.period)
