@@ -3,27 +3,33 @@ from lpa_star.ASensor import ASensor
 from lpa_star.GMap import Gmap
 from typing import Type, Tuple
 from lpa_star.exception.MapInitializationException import MapInitializationException
+from lpa_star.exception.PathDoesNotExistException import PathDoesNotExistException
 import time
 from priority_queue.PriorityQueue import PriorityQueue
+import collections
 
 class LPAStarPathFinder:
 
     def __init__(self, robot: Type[ARobot], sensor: Type[ASensor], params: Dict[str, int]):
         self.robot = robot
         self.sensor = sensor
+
         self.period = self.__param_getter("period", params)
+        self.infinity = (self.map.rows * self.map.columns) ** 2
+
         self.goal = None
         self.start = None
         self.map = Gmap(obstacles = [], params = params)
 
-        self.g = [[int("inf") for _ in range(self.map.columns)] for _ in range(self.map.rows)]
-        self.rhs = [[int("inf") for _ in range(self.map.columns)] for _ in range(self.map.rows)]
+        self.g = [[self.infinity for _ in range(self.map.columns)] for _ in range(self.map.rows)]
+        self.rhs = [[self.infinity for _ in range(self.map.columns)] for _ in range(self.map.rows)]
         self.discover_order = PriorityQueue()
+ 
 
     def reset(self, goal: Tuple[float, float]) -> None:
 
-        self.g = [[int("inf") for _ in range(self.map.columns)] for _ in range(self.map.rows)]
-        self.rhs = [[int("inf") for _ in range(self.map.columns)] for _ in range(self.map.rows)]
+        self.g = [[self.infinity for _ in range(self.map.columns)] for _ in range(self.map.rows)]
+        self.rhs = [[self.infinity for _ in range(self.map.columns)] for _ in range(self.map.rows)]
         self.discover_order = PriorityQueue()
 
         self.goal = self.map.coors_to_indexes(*goal)
@@ -46,27 +52,35 @@ class LPAStarPathFinder:
             current_obstacles = self.map.get_obstacles()
             new_obstacles = self.map.convert_obstacles_to_graph(self.sensor.scan(self.robot.get_position()))
 
-            self.map.set_obstacles(new_obstacles)
+            if not collections.Counter(current_obstacles) == collections.Counter(new_obstacles):
 
-            for obstacle in new_obstacles:
-                if not obstacle in current_obstacles:
-                    self.__update_vertex(obstacle)
+                self.map.set_obstacles(new_obstacles)
 
-            for obstacle in current_obstacles:
-                if not obstacle in new_obstacles:
-                    self.__update_vertex(obstacle)
+                for obstacle in new_obstacles:
+                    if not obstacle in current_obstacles:
+                        self.__update_vertex(obstacle)
 
-            model_path = self.__compute_shortest_path()
-            real_path = map(model_path, lambda point: self.map.indexes_to_coors(*point))
+                for obstacle in current_obstacles:
+                    if not obstacle in new_obstacles:
+                        self.__update_vertex(obstacle)
 
-            self.robot.follow_trajectory(real_path)
+                try:
+                    model_path = self.compute_shortest_path()
+                except PathDoesNotExistException:
+                    self.__pause()
+                    continue
+
+                real_path = map(model_path, lambda point: self.map.indexes_to_coors(*point))
+
+                self.robot.follow_trajectory(real_path)
+
             self.__pause()
         
         if self.robot.worker.is_alive():
             self.robot.worker.kill()
 
     def __calculate_key(self, i: int, j: int) -> Tuple[int, int]:
-        return min(g[i][j], rhs[i][j] + self.map.get_heurisitcs_cost((i, j), self.goal)), min(g[i][j], rhs[i][j])
+        return min(g[i][j], rhs[i][j]) + self.map.get_heurisitcs_cost((i, j), self.goal), min(g[i][j], rhs[i][j])
 
     def __update_vertex(self, v: Tuple[int, int]) -> None:
         i, j = v
@@ -76,7 +90,7 @@ class LPAStarPathFinder:
         self.discover_order.remove(v)
         if g[i][j] != rhs[i][j] self.discover_order.insert(self.__calculate_key(i, j), v)
 
-    def __compute_shortest_path(self) -> Iterable[Tuple[int, int]]:
+    def compute_shortest_path(self) -> Iterable[Tuple[int, int]]:
         while ((self.discover_order.top_key() < self.__calculate_key(*self.goal)) or 
             (rhs[self.goal[0]][self.goal[1]] != g[self.goal[0]][self.goal[1]])):
             v = self.discover_order.pop()
@@ -86,10 +100,29 @@ class LPAStarPathFinder:
                 for neighbour in self.map.get_neighbours(v):
                     self.__update_vertex(neighbour)
             else:
-                g[i][j] = int("inf")
+                g[i][j] = self.infinity
                 for neighbour in self.map.get_neighbours(v):
                     self.__update_vertex(neighbour)
                 self.__update_vertex(v)
+
+        if g[self.goal[0]][self.goal[1]] == self.infinity:
+            raise PathDoesNotExistException("Cannot go from " + str(self.start) + " to " + str(self.goal))
+
+        s = self.goal
+        path = [s]
+        while s != self.start:
+            neighbours = self.map.get_neighbours(s)
+            pred = neighbours[0]
+            min_pred = g[pred[0]][pred[1]] + self.map.get_transition_cost(pred, s)
+            for neighbour in neighbours:
+                x = g[neighbour[0]][neighbour[1]] + self.map.get_transition_cost(neighbour, s)
+                if x < min_pred:
+                    min_pred = x
+                    pred = neighbour
+            path.insert(0, pred)
+            s = pred
+
+        return path
 
 
     def __pause() -> None:
