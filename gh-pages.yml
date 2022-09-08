@@ -1,8 +1,8 @@
 name: Sphinx pages
 on:
   push:
-    branches:
-    - master
+    branches: [ main ]
+    
 jobs:
   build:
     runs-on: ubuntu-latest
