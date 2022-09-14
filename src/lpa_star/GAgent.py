@@ -2,7 +2,7 @@ import multiprocessing as mp
 from typing import Iterable, Tuple
 
 
-class GRobot():
+class GAgent():
     
     """ A class which contains robot's methods to implement for path finding.
     Your robot class must inherit from this class and override get_position, move and stop methods.
@@ -36,7 +36,7 @@ class GRobot():
             for point in points:
                 self.move(*point)
 
-        self.worker = mp.Process(target=follow, args=(points, ))
+        self.worker = mp.Process(target=follow, args=(shrinked_trajectory, ))
         self.worker.start()
 
     def stop_trajectory(self) -> None:
@@ -46,7 +46,7 @@ class GRobot():
     def get_position(self) -> Tuple[float, float, float]:
         pass
 
-    def move(self, x: float, y: float) -> bool:
+    def move(self, x: float, y: float) -> None:
         pass
 
     def stop(self) -> None:
