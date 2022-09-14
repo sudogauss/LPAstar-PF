@@ -18,7 +18,7 @@ class GMap():
 
         self.heuristics_multiplier = self.__param_getter("heuristics_multiplier", params)
 
-    def __param_getter(self, param_name: str, params: Dict[Any]) -> Any:
+    def __param_getter(self, param_name: str, params: Dict[str, Any]) -> Any:
         if param_name in params.keys():
             return params[param_name]
         raise MapInitializationException("Parameter required, but not provided: " + param_name)

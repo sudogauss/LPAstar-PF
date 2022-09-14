@@ -1,4 +1,4 @@
-from lpa_star.ARobot import ARobot
+from lpa_star.GAgent import GAgent
 from lpa_star.ASensor import ASensor
 from lpa_star.GMap import Gmap
 from typing import Type, Tuple
@@ -10,7 +10,7 @@ import collections
 
 class LPAStarPathFinder:
 
-    def __init__(self, robot: Type[ARobot], sensor: Type[ASensor], params: Dict[str, int]):
+    def __init__(self, robot: Type[GAgent], sensor: Type[ASensor], params: Dict[str, int]):
         self.robot = robot
         self.sensor = sensor
 
@@ -38,6 +38,7 @@ class LPAStarPathFinder:
         self.start = (i, j)
         rhs[i][j] = 0
         self.discover_order.insert((self.__calculate_key(i, j), (i, j)))
+
 
     def find_path(self, goal: Tuple[float, float]) -> None:
 
@@ -68,9 +69,9 @@ class LPAStarPathFinder:
                     model_path = self.compute_shortest_path()
                 except PathDoesNotExistException:
                     self.__pause()
-                    continue
 
-                real_path = map(model_path, lambda point: self.map.indexes_to_coors(*point))
+                shrinked_path = self.__shrink_path(model_path)
+                real_path = map(shrinked_path, lambda point: self.map.indexes_to_coors(*point))
 
                 self.robot.follow_trajectory(real_path)
 
@@ -79,8 +80,28 @@ class LPAStarPathFinder:
         if self.robot.worker.is_alive():
             self.robot.worker.kill()
 
+
+    def __shrink_path(self, model_path: Iterable[Tuple[int, int]]) -> Iterable[Tuple[int, int]]:
+
+        shrinked_path = []
+
+        if len(model_path) > 2:
+            direction = abs(model_path[0][0] - model_path[1][0]) + 2 * abs(model_path[0][1] - model_path[1][1]) 
+            for i in range(1, len(model_path)):
+                tmp = direction
+                direction = abs(model_path[i-1][0] - model_path[i][0]) + 2 * abs(model_path[i-1][1] - model_path[i][1]) 
+                if tmp != direction:
+                    shrinked_path.append(model_path[i-1])
+            shrinked_path.append(model_path[len(model_path) - 1])
+        else:
+            shrinked_path = model_path
+
+        return shrinked_path
+
+
     def __calculate_key(self, i: int, j: int) -> Tuple[int, int]:
         return min(g[i][j], rhs[i][j]) + self.map.get_heurisitcs_cost((i, j), self.goal), min(g[i][j], rhs[i][j])
+
 
     def __update_vertex(self, v: Tuple[int, int]) -> None:
         i, j = v
@@ -89,6 +110,7 @@ class LPAStarPathFinder:
                 self.map.get_neighbours(v))))
         self.discover_order.remove(v)
         if g[i][j] != rhs[i][j] self.discover_order.insert(self.__calculate_key(i, j), v)
+
 
     def compute_shortest_path(self) -> Iterable[Tuple[int, int]]:
         while ((self.discover_order.top_key() < self.__calculate_key(*self.goal)) or 
@@ -128,7 +150,8 @@ class LPAStarPathFinder:
     def __pause() -> None:
         time.sleep(self.period)
 
-    def __param_getter(self, param_name: str, params: Dict[str, int]) -> Any:
+
+    def __param_getter(self, param_name: str, params: Dict[str, Any]) -> Any:
         if param_name in params.keys():
             return params[param_name]
         raise MapInitializationException("Parameter required, but not provided: " + param_name)
