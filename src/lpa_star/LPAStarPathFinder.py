@@ -10,8 +10,8 @@ import collections
 
 class LPAStarPathFinder:
 
-    def __init__(self, robot: Type[GAgent], sensor: Type[ASensor], params: Dict[str, int]):
-        self.robot = robot
+    def __init__(self, agent: Type[GAgent], sensor: Type[ASensor], params: Dict[str, int]):
+        self.agent = agent
         self.sensor = sensor
 
         self.period = self.__param_getter("period", params)
@@ -33,7 +33,7 @@ class LPAStarPathFinder:
         self.discover_order = PriorityQueue()
 
         self.goal = self.map.coors_to_indexes(*goal)
-        x, y, _ = self.robot.get_position()
+        x, y, _ = self.agent.get_position()
         i, j = self.map.coors_to_indexes(x, y)
         self.start = (i, j)
         rhs[i][j] = 0
@@ -45,13 +45,13 @@ class LPAStarPathFinder:
         self.reset(goal)
 
         while True:
-            x, y, _ = self.robot.get_position()
+            x, y, _ = self.agent.get_position()
             if (x - goal[0]) ** 2 + (y - goal[1]) <= (self.map.get_resolution() ** 2):
-                self.robot.stop_trajectory()
+                self.agent.stop_trajectory()
                 return
             
             current_obstacles = self.map.get_obstacles()
-            new_obstacles = self.map.convert_obstacles_to_graph(self.sensor.scan(self.robot.get_position()))
+            new_obstacles = self.map.convert_obstacles_to_graph(self.sensor.scan(self.agent.get_position()))
 
             if not collections.Counter(current_obstacles) == collections.Counter(new_obstacles):
 
@@ -73,12 +73,13 @@ class LPAStarPathFinder:
                 shrinked_path = self.__shrink_path(model_path)
                 real_path = map(shrinked_path, lambda point: self.map.indexes_to_coors(*point))
 
-                self.robot.follow_trajectory(real_path)
+                self.agent.follow_trajectory(real_path)
 
             self.__pause()
         
-        if self.robot.worker.is_alive():
-            self.robot.worker.kill()
+        if self.agent.worker.is_alive():
+            self.agent.worker.kill()
+            self.agent.stop()
 
 
     def __shrink_path(self, model_path: Iterable[Tuple[int, int]]) -> Iterable[Tuple[int, int]]:
@@ -131,8 +132,9 @@ class LPAStarPathFinder:
             raise PathDoesNotExistException("Cannot go from " + str(self.start) + " to " + str(self.goal))
 
         s = self.goal
+        cur_vertex = self.map.coors_to_indexes(self.agent.get_position()[0], self.agent.get_position()[1])
         path = [s]
-        while s != self.start:
+        while s != cur_vertex:
             neighbours = self.map.get_neighbours(s)
             pred = neighbours[0]
             min_pred = g[pred[0]][pred[1]] + self.map.get_transition_cost(pred, s)
