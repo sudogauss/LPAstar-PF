@@ -16,8 +16,8 @@ class GAgent():
     -------
 
     get_position():
-        Retreives the position  of the agent in <b>[x, y, alpha]</b> format, where <b>(x, y)</b> are the coordinates of
-        the agent and <b>alpha</b> is its orientation.
+        Retreives the position  of the agent in **[x, y, alpha]** format, where **(x, y)** are the coordinates of
+        the agent and **alpha** is its orientation.
 
     follow_trajectory(points):
         Makes the agent follow the trajectory. Must use a worker process to execute the path.
@@ -63,13 +63,13 @@ class GAgent():
         """ Gets agent's position.
 
         Returns:
-            Tuple[float, float, float]: The position of the agent in <b>[x, y, alpha]</b> format, where
-            <b>(x, y)</b> are the coordinates of the agent and <b>alpha</b> is its orientation
+            Tuple[float, float, float]: The position of the agent in **[x, y, alpha]** format, where
+            **(x, y)** are the coordinates of the agent and **alpha** is its orientation
         """
         pass
 
     def move(self, x: float, y: float) -> None:
-        """ Moves agent to <b>(x, y)</b>
+        """ Moves agent to **(x, y)**
 
         Args:
             x (float): The x-coordinate to move to
