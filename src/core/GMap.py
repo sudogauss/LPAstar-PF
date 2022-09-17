@@ -1,5 +1,6 @@
 from typing import Iterable, Dict, Tuple, Any
 from exception.MapInitializationException import MapInitializationException
+from exception.ImpossibleTransitionException import ImpossibleTransitionException
 from math import sqrt
 
 
@@ -13,7 +14,7 @@ class GMap():
 
     Attributes
     ----------
-    width : int
+    width: int
         The width of the map.
     height: int
         The height if the map.
@@ -62,8 +63,8 @@ class GMap():
         """ Uses __param_getter method to extract data from dictionary. Initializes obstacles if provided.
 
         Args:
-            obstacles=None (Iterable[Tuple[float, float, float]]): A list of real life obstacles
-            params (Dict[str, int]): A dictionary with attributes to initialize
+            obstacles=None (Iterable[Tuple[float, float, float]]): A list of real life obstacles.
+            params (Dict[str, int]): A dictionary with attributes to initialize.
         """
         self.width = self.__param_getter("width", params)
         self.height = self.__param_getter("height", params)
@@ -98,7 +99,7 @@ class GMap():
             return params[param_name]
         raise MapInitializationException("Parameter required, but not provided: " + param_name)
 
-    def convert_obstacles_to_graph(obstacles: Iterable[Tuple[float, float, float]]) -> Iterable[Tuple[int ,int]]:
+    def convert_obstacles_to_graph(self, obstacles: Iterable[Tuple[float, float, float]]) -> Iterable[Tuple[int,int]]:
         """ Converts real life obstacles to theirs' graph representation. Obstacles' representations as graph have no width,
             they occupy only graph cases/vertices.
 
@@ -116,15 +117,14 @@ class GMap():
             y = obstacle[1]
             w = obstacle[2] / 2
 
-            square_left_i, square_top_j = self.coors_to_indexes(max(0, x - w), max(0, y - w))
-            square_right_i, square_bottom_j = self.coors_to_indexes(min(width, x + w), min(height, y + w))
+            square_left_i, square_top_j = self.coors_to_indexes(max(0.0, x - w), max(0.0, y - w))
+            square_right_i, square_bottom_j = self.coors_to_indexes(min(self.width, x + w), min(self.height, y + w))
 
             for i in range(square_left_i, square_right_i + 1):
                 for j in range(square_top_j, square_bottom_j + 1):
                     model_obstacles.append((i, j))
 
         return model_obstacles
-
 
     def coors_to_indexes(self, x: float, y: float) -> Tuple[int, int]:
         """ Converts real life coordinates to the indices of the graph's vertex
@@ -164,7 +164,8 @@ class GMap():
             float: A transition cost from **_from** to **_to**
         """
         if abs(_from[0] - _to[0]) > 1 or abs(_from[1] - _to[1]) > 1:
-            raise ImpossibleTransitionException("Impossible transition from (" + _from[0] + "," + _from[1] + ") to (" + _to[0] + "," + _to[1])
+            raise ImpossibleTransitionException("Impossible transition from (" + str(_from[0])
+                                                + "," + str(_from[1]) + ") to (" + str(_to[0]) + "," + str(_to[1]))
         if  _to in self.obstacles or _from in self.obstacles:
             return self.obstacle_case_value
         else:
@@ -195,7 +196,7 @@ class GMap():
             if j + 1 <= self.columns:
                 neighbours.append((i, j+1))
                 neighbours.append((i+1, j+1))
-
+        return neighbours
 
     def get_heurisitcs_cost(self, _from: Tuple[int, int], _to: Tuple[int, int]) -> float:
         """ Gets heuristics cost to go from **_from** to **_to**
@@ -207,7 +208,7 @@ class GMap():
         Returns:
             float: The heuristics cost from **_from** to **_to**
         """
-        return self.heurisitcs_multiplier * sqrt(abs(_from[1] - _to[1]) ** 2 + abs(_from[0] - _to[0]) ** 2)
+        return self.heuristics_multiplier * sqrt(abs(_from[1] - _to[1]) ** 2 + abs(_from[0] - _to[0]) ** 2)
 
     def get_resolution(self) -> int:
         """ Gets the resolution

@@ -12,7 +12,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../src/lpa_star'))
+sys.path.insert(0, os.path.abspath('../../src/core'))
 
 
 # -- Project information -----------------------------------------------------

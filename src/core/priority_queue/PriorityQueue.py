@@ -1,13 +1,15 @@
 from typing import Tuple, Union
-import typing_extensions.extensions as extensions
+from priority_queue.typing_extensions.extensions import comparable_t
+from priority_queue.exception.EmptyQueueException import EmptyQueueException
 import heapq
+
 
 class PriorityQueue:
 
     def __init__(self):
         self.h = []
 
-    def insert(self, key: extensions.comparable_t, value: extensions.comparable_t):
+    def insert(self, key: comparable_t, value: comparable_t):
         heapq.heappush(self.h, (key, value))
 
     def pop(self):
@@ -18,9 +20,9 @@ class PriorityQueue:
             raise EmptyQueueException
         return self.h[0][0]
 
-    def remove(self, value: extensions.comparable_t) -> None:
+    def remove(self, value: comparable_t) -> None:
         pos = -1
-        for i in len(self.h):
+        for i in range(len(self.h)):
             if self.h[i][1] == value:
                 pos = i
                 break

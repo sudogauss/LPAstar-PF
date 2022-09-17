@@ -20,6 +20,7 @@ Project Architecture:
 
 .. image:: ../assets/LPAStarPathFinder.png
 
+lpa_star package.
 ==================
 
 .. automodule:: GAgent
@@ -37,6 +38,13 @@ Project Architecture:
 ==================
 
 .. automodule:: GMap
+   :members:
+   :private-members:
+   :special-members:
+
+==================
+
+.. automodule:: LPAStarPathFinder
    :members:
    :private-members:
    :special-members:

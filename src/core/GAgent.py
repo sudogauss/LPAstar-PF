@@ -2,14 +2,14 @@ import multiprocessing as mp
 from typing import Iterable, Tuple
 
 
-class GAgent():
+class GAgent:
     
     """ A class which contains robot's methods to implement for path finding.
     Your robot class must inherit from this class and override get_position, move and stop methods.
 
     Attributes
     ----------
-    worker : mp.Process
+    worker: mp.Process
         A worker process to run agent's movement methods
 
     Methods
@@ -40,16 +40,16 @@ class GAgent():
 
         Args:
             points (Iterable[Tuple[float, float]]): A trajectory to follow. Each point is a tuple of the next
-            coordinates
+            position to go to.
         """
 
         self.stop_trajectory()
 
-        def follow(points):
-            for point in points:
+        def follow(_points):
+            for point in _points:
                 self.move(*point)
 
-        self.worker = mp.Process(target=follow, args=(shrinked_trajectory, ))
+        self.worker = mp.Process(target=follow, args=(points, ))
         self.worker.start()
 
     def stop_trajectory(self) -> None:

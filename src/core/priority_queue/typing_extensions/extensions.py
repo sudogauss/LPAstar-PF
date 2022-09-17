@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Protocol, TypeVar
+from typing import Protocol, TypeVar, Any
 
 class Comparable(Protocol):
 
