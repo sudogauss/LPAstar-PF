@@ -23,20 +23,20 @@ The implementation of this algorithm is based on the [***Sven Koeing, Maxim Likh
 
 LPA* uses 3 functions **g**, **rhs** and **h**. 
 
-1. **g(s)** represents the minimal distance from $ s_{start} $ to $ s $. 
-2. **rhs(s)** is a one-step lookup based on **g** values. $ rhs(s) =  min_{s' \in {Pred(s)}}[g(s') + c(s', s)] \ and \ rhs(s_{start}) = 0 $, where $ c(s', s) $ is a transition cost from $ s' $ to $ s $. **rhs** has more information and influences the expansion of the vertices.
+1. **g(s)** represents the minimal distance from ![equation](https://latex.codecogs.com/svg.image?s_{start}) to *s*. 
+2. **rhs(s)** is a one-step lookup based on **g** values. ![equation](https://latex.codecogs.com/svg.image?rhs(s)&space;=&space;&space;min_{s'&space;\in&space;{Pred(s)}}[g(s')&space;&plus;&space;c(s',&space;s)]&space;\&space;and&space;\&space;rhs(s_{start})&space;=&space;0), where *c(s', s)* is a transition cost from *s'* to *s*. **rhs** has more information and influences the expansion of the vertices.
 3. **h(s, s')** is a heuristics. It is used by LPA* to expand only on vertices "which make sense" before expand on the other vertices if the obstacles are present on the way.
 
 ***Main routine:***
 -------------------
 
-***Main*** function initializes all variables that matter for path-finding. It assigns all ***g-values*** and ***rhs-values*** to infinity and then puts $ rhs(s_{start}) = 0 $. Then, while our agent (robot for example) does not reach the goal we compute the shortest path with current map configuration. We rescan the full map then and we update each vertex for which the edge cost has been changed.
+***Main*** function initializes all variables that matter for path-finding. It assigns all ***g-values*** and ***rhs-values*** to infinity and then puts ![equation](https://latex.codecogs.com/svg.image?rhs(s_{start})&space;=&space;0). Then, while our agent (robot for example) does not reach the goal we compute the shortest path with current map configuration. We rescan the full map then and we update each vertex for which the edge cost has been changed.
 
 
 ***Update vertex***
 -------------------
 
-***UpdateVertex*** function recalculates the ***rhs-value*** of the vertex using the following formula: $ rhs(s) =  min_{s' \in {Pred(s)}}[g(s') + c(s', s)] $. Then it removes the vertex from priority queue and reinserts it if ***g-value*** of the vertex is not equal to its ***rhs-value*** (there is possible optimization).
+***UpdateVertex*** function recalculates the ***rhs-value*** of the vertex using the following formula: ![equation](https://latex.codecogs.com/svg.image?rhs(s)&space;=&space;&space;min_{s'&space;\in&space;{Pred(s)}}[g(s')&space;&plus;&space;c(s',&space;s)]&space;\&space;and&space;\&space;rhs(s_{start})&space;=&space;0). Then it removes the vertex from priority queue and reinserts it if ***g-value*** of the vertex is not equal to its ***rhs-value*** (there is possible optimization).
 
 
 ***ComputeShortestPath***
