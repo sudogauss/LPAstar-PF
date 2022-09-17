@@ -19,9 +19,10 @@ class ASensor(ABC):
         """ Scans the environment according to the sensor position and returns a list of obstacles.
 
         Args:
-            origin (Tuple[float, float, float]): The position of the sensor in the **[x, y, alpha]** format, where 
-            **(x, y)** are the coordinates of the sensor and **alpha** is its orientation. It is used to transform 
-            relative obstacles' coordinates to absolute coordinates compared to map's origin. 
+            origin (Tuple[float, float, float]): 
+                The position of the sensor in the **[x, y, alpha]** format, where  **(x, y)** are the coordinates 
+                of the sensor and **alpha** is its orientation. It is used to transform relative obstacles' 
+                coordinates to absolute coordinates compared to map's origin. 
 
         Returns:
             Iterable[Tuple[float, float, float]]: An Iterable(list generally) of the obstacles in the **[x, y, w]** format,

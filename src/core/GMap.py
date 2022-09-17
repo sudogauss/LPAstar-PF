@@ -63,8 +63,10 @@ class GMap():
         """ Uses __param_getter method to extract data from dictionary. Initializes obstacles if provided.
 
         Args:
-            obstacles=None (Iterable[Tuple[float, float, float]]): A list of real life obstacles.
-            params (Dict[str, int]): A dictionary with attributes to initialize.
+            obstacles=None (Iterable[Tuple[float, float, float]]): 
+                A list of real life obstacles.
+            params (Dict[str, int]): 
+                A dictionary with attributes to initialize.
         """
         self.width = self.__param_getter("width", params)
         self.height = self.__param_getter("height", params)
@@ -86,8 +88,10 @@ class GMap():
             required arguments have been provided.
 
         Args:
-            param_name (str): A name of an argument to extract
-            params (Dict[str, Any]): A dictionary to extract from
+            param_name (str): 
+                A name of an argument to extract.
+            params (Dict[str, Any]): 
+                A dictionary to extract from.
 
         Raises:
             MapInitializationException: Occurs when the required argument is missing
@@ -104,8 +108,8 @@ class GMap():
             they occupy only graph cases/vertices.
 
         Args:
-            obstacles (Iterable[Tuple[float, float, float]]): Real life obstacles in **[x, y, w]** format, where
-            **(x, y)** are obstacle's coordinates and **w** is its width
+            obstacles (Iterable[Tuple[float, float, float]]): 
+                Real life obstacles in **[x, y, w]** format, where **(x, y)** are obstacle's coordinates and **w** is its width
 
         Returns:
             Iterable[Tuple[int ,int]]: Graph representation of the obstacles.
@@ -130,8 +134,10 @@ class GMap():
         """ Converts real life coordinates to the indices of the graph's vertex
 
         Args:
-            x (float): Real life x coordinate
-            y (float): Real life y coordinate
+            x (float): 
+                Real life x coordinate
+            y (float): 
+                Real life y coordinate
 
         Returns:
             Tuple[int, int]: Indices of the graph's vertex which corresponds to the **(x, y)**
@@ -142,8 +148,10 @@ class GMap():
         """ Converts indices of the graph's vertex to the real life coordinates
 
         Args:
-            i (int): First index of the vertex
-            j (int): Second index of the vertex
+            i (int): 
+                First index of the vertex
+            j (int): 
+                Second index of the vertex
 
         Returns:
             Tuple[float, float]: Real life coordinates
@@ -154,8 +162,10 @@ class GMap():
         """ Gets a transition cost between **_from** and **_to** vertex if and only if they are neighbours.
 
         Args:
-            _from (Tuple[int, int]): A vertex to go from
-            _to (Tuple[int, int]): A vertex to go to
+            _from (Tuple[int, int]): 
+                A vertex to go from
+            _to (Tuple[int, int]): 
+                A vertex to go to
 
         Raises:
             ImpossibleTransitionException: Exception occurs, when **_from** and **_to** are not neighbours
@@ -175,7 +185,8 @@ class GMap():
         """ Gets all neighbours of the **vertex**
 
         Args:
-            vertex (Tuple[int, int]): The vertex to get neighbours of
+            vertex (Tuple[int, int]): 
+                The vertex to get neighbours of
 
         Returns:
             Iterable[Tuple[int, int]]: Neighbours of the **vertex**
@@ -202,8 +213,10 @@ class GMap():
         """ Gets heuristics cost to go from **_from** to **_to**
 
         Args:
-            _from (Tuple[int, int]): A vertex to go from
-            _to (Tuple[int, int]): A vertex to go to
+            _from (Tuple[int, int]): 
+                A vertex to go from
+            _to (Tuple[int, int]): 
+                A vertex to go to
 
         Returns:
             float: The heuristics cost from **_from** to **_to**
@@ -230,7 +243,8 @@ class GMap():
         """ Puts new list of obstacles on the map
 
         Args:
-            _obstacles (Iterable[Tuple[int, int]]): A new list of obstacles to put on the map 
+            _obstacles (Iterable[Tuple[int, int]]): 
+                A new list of obstacles to put on the map 
         """
         self.obstacles = _obstacles
 

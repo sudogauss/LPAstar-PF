@@ -39,8 +39,8 @@ class GAgent:
         the worker process. Uses move function.
 
         Args:
-            points (Iterable[Tuple[float, float]]): A trajectory to follow. Each point is a tuple of the next
-            position to go to.
+            points (Iterable[Tuple[float, float]]): 
+                A trajectory to follow. Each point is a tuple of the next position to go to.
         """
 
         self.stop_trajectory()
@@ -72,8 +72,10 @@ class GAgent:
         """ Moves agent to **(x, y)**
 
         Args:
-            x (float): The x-coordinate to move to
-            y (float): The y-coordinate to move to
+            x (float): 
+                The x-coordinate to move to
+            y (float): 
+                The y-coordinate to move to
         """
         pass
 
