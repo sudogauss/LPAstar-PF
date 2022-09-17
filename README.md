@@ -4,7 +4,7 @@ This repository contains a LPA* algorithm implementation. It also contains some 
 
 # What is LPA*?
 
-LPA* is an algorithm which allows us to find the shortest path from $ s_{start} $ to $ s_{goal} $. It proceeds exactly as A*, but is adapted to the dynamic changes of the map in condition that the map is known at every instant of time.
+LPA* is an algorithm which allows us to find the shortest path from the start vertex to the goal vertex. It proceeds exactly as A*, but is adapted to the dynamic changes of the map in condition that the map is known at every instant of time.
 
 The implementation of this algorithm is based on the [***Sven Koeing, Maxim Likhachev D\* Lite***](http://idm-lab.org/bib/abstracts/papers/aaai02b.pdf) paper. Here is a pseudocode and intuitive explanation of the algorithm:
 
