@@ -1,6 +1,5 @@
-from typing import Tuple, Union
-from priority_queue.typing_extensions.extensions import comparable_t
-from priority_queue.exception.EmptyQueueException import EmptyQueueException
+from .typing_extensions.extensions import comparable_t
+from .exception.EmptyQueueException import EmptyQueueException
 import heapq
 
 
