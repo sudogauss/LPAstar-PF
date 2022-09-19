@@ -1,5 +1,5 @@
- # LPAStar - Path Finder (Universal Base Path Finder)
- 
+ # LPAStar - Path Finder
+
 This repository contains a LPA* algorithm implementation. It also contains some abstractions and classes to inherit from if you want to customize you dynamic system behaviour. Check out python [documentation](https://sudogauss.github.io/LPAstar-PF/) and [examples](https://github.com/sudogauss/LPAstar-PF/tree/main/example). Below, you have the basic explanation of the algorithm and description of the project.
 
 # What is LPA*?
@@ -21,9 +21,9 @@ The implementation of this algorithm is based on the [***Sven Koeing, Maxim Likh
 ***Three functions:***
 ----------------------
 
-LPA* uses 3 functions **g**, **rhs** and **h**. 
+LPA* uses 3 functions **g**, **rhs** and **h**.
 
-1. **g(s)** represents the minimal distance from ![equation](https://latex.codecogs.com/svg.image?s_{start}) to *s*. 
+1. **g(s)** represents the minimal distance from ![equation](https://latex.codecogs.com/svg.image?s_{start}) to *s*.
 2. **rhs(s)** is a one-step lookup based on **g** values. ![equation](https://latex.codecogs.com/svg.image?rhs(s)&space;=&space;&space;min_{s'&space;\in&space;{Pred(s)}}[g(s')&space;&plus;&space;c(s',&space;s)]&space;\&space;and&space;\&space;rhs(s_{start})&space;=&space;0), where *c(s', s)* is a transition cost from *s'* to *s*. **rhs** has more information and influences the expansion of the vertices.
 3. **h(s, s')** is a heuristics. It is used by LPA* to expand only on vertices "which make sense" before expand on the other vertices if the obstacles are present on the way.
 
@@ -52,6 +52,3 @@ This project allows you to implement your own path-finding agent (robot + sensor
 Here is the UML-diagram of the project that can help you in better understanding of the architecture:
 
 <img src="./doc/assets/LPAStarPathFinder.png" style="background-color: white">
-
-
-
