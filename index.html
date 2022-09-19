@@ -1,0 +1,652 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Welcome to LPAstar-PF’s documentation! &#8212; LPAstar-PF  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinxdoc.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">LPAstar-PF  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Welcome to LPAstar-PF’s documentation!</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="welcome-to-lpastar-pf-s-documentation">
+<h1>Welcome to LPAstar-PF’s documentation!<a class="headerlink" href="#welcome-to-lpastar-pf-s-documentation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+<p>Project Architecture:</p>
+<img alt="_images/LPAStarPathFinder.png" src="_images/LPAStarPathFinder.png" />
+</section>
+<section id="module-GAgent">
+<span id="lpa-star-package"></span><h1>lpa_star package.<a class="headerlink" href="#module-GAgent" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="GAgent.GAgent">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">GAgent.</span></span><span class="sig-name descname"><span class="pre">GAgent</span></span><a class="headerlink" href="#GAgent.GAgent" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class which contains robot’s methods to implement for path finding.
+Your robot class must inherit from this class and override get_position, move and stop methods.</p>
+<dl class="simple">
+<dt>worker: mp.Process</dt><dd><p>A worker process to run agent’s movement methods</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>get_position():</dt><dd><p>Retreives the position  of the agent in <strong>[x, y, alpha]</strong> format, where <strong>(x, y)</strong> are the coordinates of
+the agent and <strong>alpha</strong> is its orientation.</p>
+</dd>
+<dt>follow_trajectory(points):</dt><dd><p>Makes the agent follow the trajectory. Must use a worker process to execute the path.</p>
+</dd>
+<dt>move(x, y):</dt><dd><p>Moves the agent to (x,y).</p>
+</dd>
+<dt>stop():</dt><dd><p>Stops the agent.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="GAgent.GAgent.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#GAgent.GAgent.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes robot’s worker process to None.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="GAgent.GAgent.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#GAgent.GAgent.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GAgent.GAgent.follow_trajectory">
+<span class="sig-name descname"><span class="pre">follow_trajectory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#GAgent.GAgent.follow_trajectory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes an agent follow a trajectory passed in parameters. Creates an auxiliary function which is run in
+the worker process. Uses move function.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>points (Iterable[Tuple[float, float]]): </dt><dd><p>A trajectory to follow. Each point is a tuple of the next position to go to.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GAgent.GAgent.get_position">
+<span class="sig-name descname"><span class="pre">get_position</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#GAgent.GAgent.get_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets agent’s position.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Tuple[float, float, float]: The position of the agent in <strong>[x, y, alpha]</strong> format, where
+<strong>(x, y)</strong> are the coordinates of the agent and <strong>alpha</strong> is its orientation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GAgent.GAgent.move">
+<span class="sig-name descname"><span class="pre">move</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#GAgent.GAgent.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Moves agent to <strong>(x, y)</strong></p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>x (float): </dt><dd><p>The x-coordinate to move to</p>
+</dd>
+<dt>y (float): </dt><dd><p>The y-coordinate to move to</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GAgent.GAgent.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#GAgent.GAgent.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops all movements of the agent</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GAgent.GAgent.stop_trajectory">
+<span class="sig-name descname"><span class="pre">stop_trajectory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#GAgent.GAgent.stop_trajectory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prevents agent from continuing the trajectory. Kills the worker process to stop giving movement commands.
+Sends a stop command to the agent.</p>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<span class="target" id="module-ASensor"></span><dl class="py class">
+<dt class="sig sig-object py" id="ASensor.ASensor">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">ASensor.</span></span><span class="sig-name descname"><span class="pre">ASensor</span></span><a class="headerlink" href="#ASensor.ASensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract class ASensor that simulates any sensor. Your sensor class must inherit
+from it and override the scan methods.</p>
+<dl class="simple">
+<dt>scan(origin):</dt><dd><p>Scans the environment and returns a list of absolute coordinates of obstacles.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ASensor.ASensor.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#ASensor.ASensor.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="ASensor.ASensor.scan">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">scan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#ASensor.ASensor.scan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scans the environment according to the sensor position and returns a list of obstacles.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>origin (Tuple[float, float, float]): </dt><dd><p>The position of the sensor in the <strong>[x, y, alpha]</strong> format, where  <strong>(x, y)</strong> are the coordinates 
+of the sensor and <strong>alpha</strong> is its orientation. It is used to transform relative obstacles’ 
+coordinates to absolute coordinates compared to map’s origin.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>Iterable[Tuple[float, float, float]]: An Iterable(list generally) of the obstacles in the <strong>[x, y, w]</strong> format,
+where <strong>(x, y)</strong> are the absolute coordinates of the center of an obstacle and <strong>w</strong> is its width</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<span class="target" id="module-GMap"></span><dl class="py class">
+<dt class="sig sig-object py" id="GMap.GMap">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">GMap.</span></span><span class="sig-name descname"><span class="pre">GMap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstacles</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#GMap.GMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>A class that represents a map. User must provide attributes values in chosen units and respect the
+convention. This class allows to represent a 2D environment as a non-oriented graph where each vertex corresponds 
+to the center of the square case with <strong>resolution x resolution</strong> dimensions. The adjacent cases are modelized by adjecent vertices.</p>
+<p>There is only 2 types of vertices: free vertices and obstacle vertices. We maintain only the list of obstacles and we 
+use <strong>get_transition_cost</strong> to retreive the edge cost and <strong>get_heuristics_cost</strong> to retreive the heuristics cost.</p>
+<dl class="simple">
+<dt>width: int</dt><dd><p>The width of the map.</p>
+</dd>
+<dt>height: int</dt><dd><p>The height if the map.</p>
+</dd>
+<dt>resolution: int</dt><dd><p>The dimension of the square case representable by a vertex.</p>
+</dd>
+<dt>rows: int</dt><dd><p>Number of cases’ rows in map representation.</p>
+</dd>
+<dt>columns: int</dt><dd><p>Number of cases’ columns in map representation.</p>
+</dd>
+<dt>free_case_value: int</dt><dd><p>A multiplier for a transition from free case to the another free case.</p>
+</dd>
+<dt>obstacle_case_value: int</dt><dd><p>A multiplier for a transition from or to the obstacle case.</p>
+</dd>
+<dt>obstacles: Iterable[Tuple[int, int]]</dt><dd><p>A list of obstacles represented by theirs indices <strong>(i, j)</strong></p>
+</dd>
+<dt>heuristics_multiplier: int</dt><dd><p>A multiplier for a heuristics transition cost.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>__param_getter(param_name, params):</dt><dd><p>Helper function, which allows to get information from a dictionary given in parameters.</p>
+</dd>
+<dt>coors_to_indexes(x, y):</dt><dd><p>Helper function used to convert real life coordinates to their graph representation.</p>
+</dd>
+<dt>indexes_to_coors(i, j):</dt><dd><p>Helper function used to convert graph representation indices to the real life coordinates.</p>
+</dd>
+<dt>convert_obstacles_to_graph(obstacles):</dt><dd><p>Helper function which allows create graph representation obstacles from real life obstacles according
+to their width.</p>
+</dd>
+<dt>get_transition_cost(_from, _to):</dt><dd><p>Gets the edge cost from vertex <strong>_from</strong> to the vertex <strong>_to</strong>.</p>
+</dd>
+<dt>get_neighbours(vertex):</dt><dd><p>Gets neighbours of the <strong>vertex</strong>.</p>
+</dd>
+<dt>get_heuristics_cost(_from, _to):</dt><dd><p>Gets the heuristics cost from vertex <strong>_from</strong> to the vertex <strong>_to</strong>.</p>
+</dd>
+<dt>get_resolution():</dt><dd><p>Gets the resolution.</p>
+</dd>
+<dt>get_obstacles():</dt><dd><p>Gets all <strong>obstacles</strong>.</p>
+</dd>
+<dt>set_obstacles(obstacles):</dt><dd><p>Sets <strong>obstacles</strong>.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="GMap.GMap.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obstacles</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#GMap.GMap.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses __param_getter method to extract data from dictionary. Initializes obstacles if provided.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>obstacles=None (Iterable[Tuple[float, float, float]]): </dt><dd><p>A list of real life obstacles.</p>
+</dd>
+<dt>params (Dict[str, int]): </dt><dd><p>A dictionary with attributes to initialize.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GMap.GMap.__param_getter">
+<span class="sig-name descname"><span class="pre">__param_getter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Any</span><a class="headerlink" href="#GMap.GMap.__param_getter" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>A function which is used to extract data from dictionary and verify that all</dt><dd><p>required arguments have been provided.</p>
+</dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>param_name (str): </dt><dd><p>A name of an argument to extract.</p>
+</dd>
+<dt>params (Dict[str, Any]): </dt><dd><p>A dictionary to extract from.</p>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>MapInitializationException: Occurs when the required argument is missing</p>
+</dd>
+<dt>Returns:</dt><dd><p>Any: A value extracted from <strong>params</strong> associated to the key <strong>param_name</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="GMap.GMap.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#GMap.GMap.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GMap.GMap.convert_obstacles_to_graph">
+<span class="sig-name descname"><span class="pre">convert_obstacles_to_graph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obstacles</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#GMap.GMap.convert_obstacles_to_graph" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Converts real life obstacles to theirs’ graph representation. Obstacles’ representations as graph have no width,</dt><dd><p>they occupy only graph cases/vertices.</p>
+</dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>obstacles (Iterable[Tuple[float, float, float]]): </dt><dd><p>Real life obstacles in <strong>[x, y, w]</strong> format, where <strong>(x, y)</strong> are obstacle’s coordinates and <strong>w</strong> is its width</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>Iterable[Tuple[int ,int]]: Graph representation of the obstacles.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GMap.GMap.coors_to_indexes">
+<span class="sig-name descname"><span class="pre">coors_to_indexes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#GMap.GMap.coors_to_indexes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts real life coordinates to the indices of the graph’s vertex</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>x (float): </dt><dd><p>Real life x coordinate</p>
+</dd>
+<dt>y (float): </dt><dd><p>Real life y coordinate</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>Tuple[int, int]: Indices of the graph’s vertex which corresponds to the <strong>(x, y)</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GMap.GMap.get_heurisitcs_cost">
+<span class="sig-name descname"><span class="pre">get_heurisitcs_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_from</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_to</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="headerlink" href="#GMap.GMap.get_heurisitcs_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets heuristics cost to go from <strong>_from</strong> to <strong>_to</strong></p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>_from (Tuple[int, int]): </dt><dd><p>A vertex to go from</p>
+</dd>
+<dt>_to (Tuple[int, int]): </dt><dd><p>A vertex to go to</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>float: The heuristics cost from <strong>_from</strong> to <strong>_to</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GMap.GMap.get_neighbours">
+<span class="sig-name descname"><span class="pre">get_neighbours</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vertex</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#GMap.GMap.get_neighbours" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets all neighbours of the <strong>vertex</strong></p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>vertex (Tuple[int, int]): </dt><dd><p>The vertex to get neighbours of</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>Iterable[Tuple[int, int]]: Neighbours of the <strong>vertex</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GMap.GMap.get_obstacles">
+<span class="sig-name descname"><span class="pre">get_obstacles</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#GMap.GMap.get_obstacles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the list of current obstacles on the map</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Iterable[Tuple[int, int]]: A list of obstacles</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GMap.GMap.get_resolution">
+<span class="sig-name descname"><span class="pre">get_resolution</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="headerlink" href="#GMap.GMap.get_resolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the resolution</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>int: The resolution of the map</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GMap.GMap.get_transition_cost">
+<span class="sig-name descname"><span class="pre">get_transition_cost</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_from</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_to</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">float</span><a class="headerlink" href="#GMap.GMap.get_transition_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a transition cost between <strong>_from</strong> and <strong>_to</strong> vertex if and only if they are neighbours.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>_from (Tuple[int, int]): </dt><dd><p>A vertex to go from</p>
+</dd>
+<dt>_to (Tuple[int, int]): </dt><dd><p>A vertex to go to</p>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>ImpossibleTransitionException: Exception occurs, when <strong>_from</strong> and <strong>_to</strong> are not neighbours</p>
+</dd>
+<dt>Returns:</dt><dd><p>float: A transition cost from <strong>_from</strong> to <strong>_to</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GMap.GMap.indexes_to_coors">
+<span class="sig-name descname"><span class="pre">indexes_to_coors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#GMap.GMap.indexes_to_coors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts indices of the graph’s vertex to the real life coordinates</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>i (int): </dt><dd><p>First index of the vertex</p>
+</dd>
+<dt>j (int): </dt><dd><p>Second index of the vertex</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>Tuple[float, float]: Real life coordinates</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="GMap.GMap.set_obstacles">
+<span class="sig-name descname"><span class="pre">set_obstacles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_obstacles</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#GMap.GMap.set_obstacles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Puts new list of obstacles on the map</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>_obstacles (Iterable[Tuple[int, int]]): </dt><dd><p>A new list of obstacles to put on the map</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<span class="target" id="module-LPAStarPathFinder"></span><dl class="py class">
+<dt class="sig sig-object py" id="LPAStarPathFinder.LPAStarPathFinder">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">LPAStarPathFinder.</span></span><span class="sig-name descname"><span class="pre">LPAStarPathFinder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#GAgent.GAgent" title="GAgent.GAgent"><span class="pre">GAgent.GAgent</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ASensor.ASensor" title="ASensor.ASensor"><span class="pre">ASensor.ASensor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LPAStarPathFinder.LPAStarPathFinder" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>A class which implements LPA* algorithm and method which is responsible to rescan the environment</dt><dd><p>with a sensor and run execution of agent’s movement method.</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>agent: GAgent</dt><dd><p>Agent, which executes movement orders of path finding.</p>
+</dd>
+<dt>sensor: ASensor</dt><dd><p>Sensor used to scan and rescan the map.</p>
+</dd>
+<dt>period: int</dt><dd><p>Map update period.</p>
+</dd>
+<dt>infinity: int</dt><dd><p>The “sufficient” modelization of infinity according to the graph nodes number.</p>
+</dd>
+<dt>goal: Tuple[int, int]</dt><dd><p>The goal vertex of the path finding.</p>
+</dd>
+<dt>start: Tuple[int, int]</dt><dd><p>The start vertex of the path finding.</p>
+</dd>
+<dt>map: GMap</dt><dd><p>A map representation as a graph containing the list of the obstacles.</p>
+</dd>
+<dt>g: List[List[int]]</dt><dd><p>g-values used to store the shortest distance from start to each vertex.</p>
+</dd>
+<dt>rhs: List[List[int]]</dt><dd><p>rhs-values used to update g-values. rhs-values are a one step look up which uses g-values.</p>
+</dd>
+<dt>discover_order: PriorityQueue</dt><dd><p>A priority queue used to store vertices to discover ordered by (min(g(s), rhs(s)) + h(s, goal), min(g(s), rhs(s))).</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>__shrink_path(model_path):</dt><dd><p>Takes model_path and adds only key vertices in each path direction to avoid agent movements to be jerky.</p>
+</dd>
+<dt>__calculate_key(i, j):</dt><dd><p>Calculates the key of vertex associated to the case (i, j) to insert it in priority queue.</p>
+</dd>
+<dt>__update_vertex(v):</dt><dd><p>Updates the rhs-value of the vertex and reinserts it in priority queue with new key if necessary.</p>
+</dd>
+<dt>__pause():</dt><dd><p>Pauses the exectuion of path finding and map update.</p>
+</dd>
+<dt>__param_getter(param_name, params):</dt><dd><p>Helper function, which allows to get information from a dictionary given in parameters.</p>
+</dd>
+<dt>reset(goal):</dt><dd><p>Resets start vertex, goal vertex, priorty_queue, g-values and rhs-values.</p>
+</dd>
+<dt>find_path(goal):</dt><dd><p>Entry point function which is responsible to rescan map, recalculate optimal path if necessary and update agent.</p>
+</dd>
+<dt>compute_shortest_path():</dt><dd><p>Computes the shortest path using the advantages of LPA* algorithm.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="LPAStarPathFinder.LPAStarPathFinder.__calculate_key">
+<span class="sig-name descname"><span class="pre">__calculate_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#LPAStarPathFinder.LPAStarPathFinder.__calculate_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the key of vertex associated to the case (i, j) to insert it in priority queue.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>i (int): </dt><dd><p>first index of the vertex</p>
+</dd>
+<dt>j (int): </dt><dd><p>second index of the vertex</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>Tuple[int, int]: A key used to insert vertex to the priority queue</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LPAStarPathFinder.LPAStarPathFinder.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#GAgent.GAgent" title="GAgent.GAgent"><span class="pre">GAgent.GAgent</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ASensor.ASensor" title="ASensor.ASensor"><span class="pre">ASensor.ASensor</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#LPAStarPathFinder.LPAStarPathFinder.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses __param_getter method to extract data from dictionary. Initializes agent and sensor.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>agent (Type[GAgent]): </dt><dd><p>An agent which executes path finding movement commands.</p>
+</dd>
+<dt>sensor (Type[ASensor]): </dt><dd><p>A sensor which is used to scan the map.</p>
+</dd>
+<dt>params (Dict[str, int]): </dt><dd><p>A dictionary with attributes to initialize.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LPAStarPathFinder.LPAStarPathFinder.__param_getter">
+<span class="sig-name descname"><span class="pre">__param_getter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">param_name</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Any</span><a class="headerlink" href="#LPAStarPathFinder.LPAStarPathFinder.__param_getter" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>A function which is used to extract data from dictionary and verify that all</dt><dd><p>required arguments have been provided.</p>
+</dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>param_name (str): </dt><dd><p>A name of an argument to extract</p>
+</dd>
+<dt>params (Dict[str, Any]): </dt><dd><p>A dictionary to extract from</p>
+</dd>
+</dl>
+</dd>
+<dt>Raises:</dt><dd><p>MapInitializationException: Occurs when the required argument is missing</p>
+</dd>
+<dt>Returns:</dt><dd><p>Any: A value extracted from <strong>params</strong> associated to the key <strong>param_name</strong></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LPAStarPathFinder.LPAStarPathFinder.__pause">
+<span class="sig-name descname"><span class="pre">__pause</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#LPAStarPathFinder.LPAStarPathFinder.__pause" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pauses current process for <strong>period</strong> milliseconds</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LPAStarPathFinder.LPAStarPathFinder.__shrink_path">
+<span class="sig-name descname"><span class="pre">__shrink_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#LPAStarPathFinder.LPAStarPathFinder.__shrink_path" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Takes model_path and adds only key vertices in each path direction to avoid agent movements to be jerky.</dt><dd><p>Adds only vertices that change agent’s direction.</p>
+</dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>model_path (Iterable[Tuple[int, int]]): </dt><dd><p>A path to shrink.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>Iterable[Tuple[int, int]]: Shrunk path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LPAStarPathFinder.LPAStarPathFinder.__update_vertex">
+<span class="sig-name descname"><span class="pre">__update_vertex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#LPAStarPathFinder.LPAStarPathFinder.__update_vertex" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Updates the rhs-value of the vertex and reinserts it in priority queue with new key if necessary.</dt><dd><p>The rhs-value of the vertex is updated according to the LPA* algorithm rhs-formula. You can find
+it in README of the repository.</p>
+</dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>v (Tuple[int, int]): </dt><dd><p>A vertex to update.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="LPAStarPathFinder.LPAStarPathFinder.__weakref__">
+<span class="sig-name descname"><span class="pre">__weakref__</span></span><a class="headerlink" href="#LPAStarPathFinder.LPAStarPathFinder.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LPAStarPathFinder.LPAStarPathFinder.compute_shortest_path">
+<span class="sig-name descname"><span class="pre">compute_shortest_path</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#LPAStarPathFinder.LPAStarPathFinder.compute_shortest_path" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Computes the shortest path using the advantages of LPA* algorithm. While the distance to the goal</dt><dd><p>vertex (g-value) is not optimal and can be updated (g-value is different from rhs-value) we update
+the g-value of the vertex on the top of the priorirty queue and then we update its neighbours.</p>
+</dd>
+<dt>Raises:</dt><dd><p>PathDoesNotExistException: Raises if there is no path from start to goal.</p>
+</dd>
+<dt>Returns:</dt><dd><p>Iterable[Tuple[int, int]]: Returns the path where each two consecutive points are neigbours.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LPAStarPathFinder.LPAStarPathFinder.find_path">
+<span class="sig-name descname"><span class="pre">find_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">goal</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#LPAStarPathFinder.LPAStarPathFinder.find_path" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Entry point function which is responsible to rescan map, recalculate optimal path if necessary and update agent.</dt><dd><p>First, it calls reset, after that it calls sensor’s scan function, converts obstacles to its graph representation and compares them to the
+previous obstacles. If there is any changes, vertex with changed cost are updated and the path is recalculated.
+The path is then shrunk and provided to the agent worker process.</p>
+</dd>
+<dt>Args:</dt><dd><dl class="simple">
+<dt>goal (Tuple[float, float]): </dt><dd><p>The goal vertex.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="LPAStarPathFinder.LPAStarPathFinder.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">goal</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#LPAStarPathFinder.LPAStarPathFinder.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets g-values and rhs-values. Initializes start and goal positions for the algorithm.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>goal (Tuple[float, float]): </dt><dd><p>The goal vertex</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to LPAstar-PF’s documentation!</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+<li><a class="reference internal" href="#module-GAgent">lpa_star package.</a></li>
+</ul>
+
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">LPAstar-PF  documentation</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Welcome to LPAstar-PF’s documentation!</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Tsimafei Liashkevich.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.0.1.
+    </div>
+  </body>
+</html>
