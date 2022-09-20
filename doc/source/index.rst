@@ -20,7 +20,7 @@ Project Architecture:
 
 .. image:: ../assets/LPAStarPathFinder.png
 
-lpa_star package.
+Core package.
 ==================
 
 .. automodule:: GAgent

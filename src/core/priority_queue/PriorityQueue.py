@@ -12,11 +12,13 @@ class PriorityQueue:
         heapq.heappush(self.h, (key, value))
 
     def pop(self):
+        if len(self.h) == 0:
+            raise EmptyQueueException("Can't pop, the queue is empty")
         return heapq.heappop(self.h)
 
     def top_key(self):
         if len(self.h) == 0:
-            raise EmptyQueueException
+            raise EmptyQueueException("Can't get top key, the queue is empty")
         return self.h[0][0]
 
     def remove(self, value: comparable_t) -> None:
