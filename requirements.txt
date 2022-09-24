@@ -1,4 +1,8 @@
+build
 flake8
+lark
 mypy==0.971
 pre-commit
 pytest
+pyyaml
+setuptools
