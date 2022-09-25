@@ -9,7 +9,7 @@ lpastar_venv
 
 #IDE
 
-.idea
+.idea/
 
 #Sphinx
 

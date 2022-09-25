@@ -7,10 +7,14 @@ PACKAGE=lpastar_pf
 ARTIFACT="$(PACKAGE)/dist/$(PACKAGE)-$(VERSION)-py3-none-any.whl"
 
 
-.PHONY: test build install clean
+.PHONY: init test build install clean
 
 
 $(VENV)/bin/activate: requirements.txt
+	if [ ! -d "./lpastar_venv" ]; then python3 -m venv lpastar_venv; fi
+	$(PIP) install -r requirements.txt
+
+init: requirements.txt
 	if [ ! -d "./lpastar_venv" ]; then python3 -m venv lpastar_venv; fi
 	$(PIP) install -r requirements.txt
 
