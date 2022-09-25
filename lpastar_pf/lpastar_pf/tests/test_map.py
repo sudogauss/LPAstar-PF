@@ -3,7 +3,7 @@ from typing import Tuple, List
 import random
 import time
 # from math import sqrt
-from .exception.ImpossibleTransitionException import ImpossibleTransitionException
+from lpastar_pf.exception.ImpossibleTransitionException import ImpossibleTransitionException
 
 
 def generate_obstacles() -> List[Tuple[float, float, float]]:

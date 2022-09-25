@@ -8,7 +8,7 @@ setup(
     ],
     packages=find_packages(
         where='.',
-        include=['lpastar_pf*'],  # ['*'] by default
-        exclude=['lpastar_pf.tests'],  # empty by default
+        include=['lpastar_pf*'],
+        exclude=['lpastar_pf.tests'],
     ),
 )

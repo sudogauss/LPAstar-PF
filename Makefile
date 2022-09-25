@@ -1,18 +1,32 @@
-.PHONY: setup build install clean
+VENV = lpastar_venv
+PYTHON = $(VENV)/bin/python3
+PIP = $(VENV)/bin/pip3
+
+VERSION=0.0.1
+PACKAGE=lpastar_pf
+ARTIFACT="$(PACKAGE)/dist/$(PACKAGE)-$(VERSION)-py3-none-any.whl"
 
 
-setup: requirements.txt
+.PHONY: test build install clean
+
+
+$(VENV)/bin/activate: requirements.txt
 	if [ ! -d "./lpastar_venv" ]; then python3 -m venv lpastar_venv; fi
-	source ./lpastar_venv/bin/activate
-	pip3 install -r requirements.txt
+	$(PIP) install -r requirements.txt
 
-build:
-	(cd ./lpastar_pf && python3 -m build)
+test: $(VENV)/bin/activate
+	pytest
 
-install:
-	pip3 install ./lpastar_pf/dist/lpastar_pf-0.0.1-py3-none-any.whl
+$(ARTIFACT): $(VENV)/bin/activate test
+	$(PYTHON) -m build $(PACKAGE)
+
+build: $(VENV)/bin/activate test
+	$(PYTHON) -m build $(PACKAGE)
+
+install: $(ARTIFACT)
+	$(PIP) install $(ARTIFACT)
 
 clean:
-	rm -rf ./lpastar_pf/dist
+	rm -rf $(PACKAGE)/dist
 	rm -rf .pytest_cache
 	rm -rf __pycache__
