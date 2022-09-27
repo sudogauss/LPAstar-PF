@@ -119,7 +119,7 @@ class GMap():
             return params[param_name]
         raise MapInitializationException("Parameter required, but not provided: " + param_name)
 
-    def convert_obstacles_to_graph(self, obstacles: Iterable[Tuple[float, float, float]]) -> Iterable[Tuple[int,int]]:
+    def convert_obstacles_to_graph(self, obstacles: Iterable[Tuple[float, float, float]]) -> Iterable[Tuple[int, int]]:
         """ Converts real life obstacles to theirs' graph representation. Obstacles' representations as graph have no width,
             they occupy only graph cases/vertices.
 
