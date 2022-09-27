@@ -2,6 +2,16 @@
 
 This repository contains a LPA* algorithm implementation. It also contains some abstractions and classes to inherit from if you want to customize you dynamic system behaviour. Check out python [documentation](https://sudogauss.github.io/LPAstar-PF/) and [examples](https://github.com/sudogauss/LPAstar-PF/tree/main/example). Below, you have the basic explanation of the algorithm and description of the project.
 
+# Project structure
+
+This project contains **lpastar_pf** package, which you can build and install with pip3. It is not available on the PyPi for the moment. To install init run **make install**. You can also just build it with **make build** or init it for development by running **make init**.
+
+It also contains **ros** package with path-finder node definition and interfaces and clients to communicate with sensor and robot nodes. You must just implement the servers.
+
+Finally, it contains **simulator** package with complete path-finder simulation in dynamic environment.
+
+You can check out **examples** if you want.
+
 # What is LPA*?
 
 LPA* is an algorithm which allows us to find the shortest path from the start vertex to the goal vertex. It proceeds exactly as A*, but is adapted to the dynamic changes of the map in condition that the map is known at every instant of time.

@@ -20,31 +20,37 @@ Project Architecture:
 
 .. image:: ../assets/LPAStarPathFinder.png
 
-Core package.
+lpastar_pf package.
 ==================
 
-.. automodule:: GAgent
+.. automodule:: lpastar_pf.GAgent
    :members:
    :private-members:
    :special-members:
 
 ==================
 
-.. automodule:: ASensor
+.. automodule:: lpastar_pf.ASensor
    :members:
    :private-members:
    :special-members:
 
 ==================
 
-.. automodule:: GMap
+.. automodule:: lpastar_pf.GMap
    :members:
    :private-members:
    :special-members:
 
 ==================
 
-.. automodule:: LPAStarPathFinder
+.. automodule:: lpastar_pf.LPAStarPathFinder
    :members:
    :private-members:
    :special-members:
+
+ros package.
+============
+
+simulator package.
+==================

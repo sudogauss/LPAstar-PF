@@ -1,3 +1,27 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "lpastar_pf"
+version = "0.0.1"
+description = "This repository contains a LPA* algorithm implementation. It also contains some abstractions and classes to inherit from if you want to customize you dynamic system behaviour."
+readme = "README.md"
+authors = [{ name = "Tim L.", email = "t.liashkevich1772@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    "License :: OSI Approved :: Apache License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+keywords = ["path-finding", "Astar", "LPAstar", "Robotics", "ROS2"]
+dependencies = [
+    "pyyaml",
+]
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = ["pytest", "mypy", "lark", "flake8", "pre-commit", "setuptools", "build"]
+
+[project.urls]
+Homepage = "https://sudogauss.github.io/LPAstar-PF/"
