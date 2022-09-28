@@ -1,0 +1,5 @@
+float64[3] origin
+---
+float64[] obstacles_xs
+float64[] obstacles_ys
+float64[] obstacles_ws
