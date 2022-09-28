@@ -2,6 +2,7 @@ build
 flake8
 lark
 mypy==0.971
+numpy
 pre-commit
 pytest
 pyyaml

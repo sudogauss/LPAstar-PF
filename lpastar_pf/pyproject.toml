@@ -21,7 +21,7 @@ dependencies = [
 requires-python = ">=3.8"
 
 [project.optional-dependencies]
-dev = ["pytest", "mypy", "lark", "flake8", "pre-commit", "setuptools", "build"]
+dev = ["pytest", "mypy", "lark", "flake8", "pre-commit", "setuptools", "build", "numpy"]
 
 [project.urls]
 Homepage = "https://sudogauss.github.io/LPAstar-PF/"

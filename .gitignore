@@ -11,6 +11,11 @@ lpastar_venv/
 
 .idea/
 
+#ROS2
+
+ros/ros2_ws/install
+ros/ros2_ws/log
+
 #Sphinx
 
 doc/html
