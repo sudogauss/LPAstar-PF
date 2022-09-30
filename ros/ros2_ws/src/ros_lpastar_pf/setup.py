@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'lpastar_pf'
+package_name = 'ros_lpastar_pf'
 
 setup(
     name=package_name,
@@ -15,7 +15,7 @@ setup(
     zip_safe=True,
     maintainer='Tim L.',
     maintainer_email='t.liashkevich1772@gmail.com',
-    description='Path finder node based on LPA* algorithm using two clients: one for client\'s instructions communication and the other for scan data. It also publishes path\'s log messages.',
+    description='Path finder node based on LPA* algorithm using two clients: one for client\'s instructions communication and the other for scan data.',
     license='GNU GPLv3',
     tests_require=['pytest'],
     entry_points={

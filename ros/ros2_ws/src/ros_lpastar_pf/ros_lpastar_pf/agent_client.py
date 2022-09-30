@@ -30,7 +30,7 @@ class AgentClient(Node, GAgent):
         self.position_future = self.position_cli.call_async(self.position_req)
         rclpy.spin_until_future_complete(self, self.position_future)
         res = self.position_future.result()
-        return (res[0], res[1], res[2])
+        return (res.pos[0], res.pos[1], res.pos[2])
 
     def move(self, x: float, y: float) -> None:
         self.move_req.x = x
@@ -38,7 +38,7 @@ class AgentClient(Node, GAgent):
         self.move_future = self.move_cli.call_async(self.move_req)
         rclpy.spin_until_future_complete(self, self.move_future)
         res = self.move_future.result()
-        if not res:
+        if not res.status:
             self.get_logger().info("Can't move to \
             (%f, %f). Internal service issue.", (x, y))
 
@@ -46,5 +46,5 @@ class AgentClient(Node, GAgent):
         self.stop_future = self.stop_cli.call_async(self.stop_req)
         rclpy.spin_until_future_complete(self, self.stop_future)
         res = self.stop_future.result()
-        if not res:
+        if not res.status:
             self.get_logger().info("Robot can't stop. Internal service issue.")

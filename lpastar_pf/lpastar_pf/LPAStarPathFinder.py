@@ -1,11 +1,12 @@
-from .GAgent import GAgent
-from .ASensor import ASensor
-from .GMap import GMap
+from lpastar_pf.GAgent import GAgent
+from lpastar_pf.ASensor import ASensor
+from lpastar_pf.GMap import GMap
 from typing import Type, Tuple, Dict, Iterable, List, Any
-from .exception.MapInitializationException import MapInitializationException
-from .exception.PathDoesNotExistException import PathDoesNotExistException
+from lpastar_pf.exception.MapInitializationException import MapInitializationException
+from lpastar_pf.exception.PathDoesNotExistException import PathDoesNotExistException
+from lpastar_pf.exception.TimeoutException import TimeoutException
 import time
-from .PriorityQueue import PriorityQueue
+from lpastar_pf.PriorityQueue import PriorityQueue
 import collections
 
 
@@ -88,6 +89,7 @@ class LPAStarPathFinder:
         self.map = GMap(params, obstacles=[])
         self.period = self.__param_getter("period", params)
         self.infinity = 2 * self.map.obstacle_case_value * (self.map.rows * self.map.columns) ** 2
+        self.timeout = self.__param_getter("timeout", params)
 
         self.goal = None
         self.start = None
@@ -131,8 +133,13 @@ class LPAStarPathFinder:
 
         # Reset of rhs-values, g-values, start and goal.
         self.reset(goal)
-
+        begin = time.time_ns()
         while True:
+
+            # Break if timeout has occured
+            if time.time_ns() - begin > (timeout * 1e9):
+                raise TimeoutException("Timeout for find_path has been reached")
+
             # Break if the agent has reached the goal.
             x, y, _ = self.agent.get_position()
             if (x - goal[0]) ** 2 + (y - goal[1]) <= (self.map.get_resolution() ** 2):
@@ -251,9 +258,13 @@ class LPAStarPathFinder:
             Iterable[Tuple[int, int]]: Returns the path where each
             two consecutive points are neigbours.
         """
-        while ((self.discover_order.top_key() < self.__calculate_key(*self.goal)) or
+        while ((self.discover_order.top_key() < self.__calculate_key(*self.goal)) or \
             (self.rhs[self.goal[0]][self.goal[1]] != self.g[self.goal[0]][self.goal[1]])):
-            v = self.discover_order.pop()
+            v = None
+            try:
+                v = self.discover_order.pop()
+            except EmptyQueueException:
+                break
             i, j = v
             if self.g[i][j] > self.rhs[i][j]:
                 self.g[i][j] = self.rhs[i][j]

@@ -7,7 +7,7 @@ PACKAGE=lpastar_pf
 ARTIFACT="$(PACKAGE)/dist/$(PACKAGE)-$(VERSION)-py3-none-any.whl"
 
 
-.PHONY: init test build install clean
+.PHONY: init test build install clean ros
 
 
 $(VENV)/bin/activate: requirements.txt
@@ -19,7 +19,7 @@ init: requirements.txt
 	$(PIP) install -r requirements.txt
 
 test: $(VENV)/bin/activate
-	pytest
+	pytest lpastar_pf
 
 $(ARTIFACT): $(VENV)/bin/activate test
 	$(PYTHON) -m build $(PACKAGE)

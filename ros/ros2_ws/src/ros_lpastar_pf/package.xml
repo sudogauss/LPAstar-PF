@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>lpastar_pf</name>
+  <name>ros_lpastar_pf</name>
   <version>0.0.1</version>
   <description>
     Path finder node based on LPA* algorithm using two clients: one for client's instructions
-    communication and the other for scan data. It also publishes path's log messages.
+    communication and the other for scan data.
   </description>
   <maintainer email="t.liashkevich1772@gmail.com">Tim L.</maintainer>
   <license>GNU GPLv3</license>
