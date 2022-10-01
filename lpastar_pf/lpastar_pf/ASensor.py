@@ -4,8 +4,9 @@ from typing import Iterable, Tuple
 
 class ASensor(ABC):
 
-    """ Abstract class ASensor that simulates any sensor. Your sensor class must
-    inherit from it and override the scan methods.
+    """ Abstract class ASensor that simulates any sensor.
+    Your sensor class must inherit from it and override
+    the scan methods.
 
     Methods
     -------
@@ -16,7 +17,8 @@ class ASensor(ABC):
     """
 
     @abstractmethod
-    def scan(self, origin: Tuple[float, float, float]) -> Iterable[Tuple[float, float, float]]:
+    def scan(self, origin: Tuple[float, float, float]) -> \
+            Iterable[Tuple[float, float, float]]:
         """ Scans the environment according to the sensor
         position and returns a list of obstacles.
 
