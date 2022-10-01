@@ -1,0 +1,8 @@
+width: 3000
+height: 2000
+resolution: 10
+free_case_value: 1
+obstacle_case_value: 1000
+heuristics_multiplier: 2
+period: 500
+timeout: 10

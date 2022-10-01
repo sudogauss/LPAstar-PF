@@ -1,5 +1,5 @@
 import rclpy
-from rclpy.Node import Node
+from rclpy.node import Node
 from lpastar_pf.ASensor import ASensor
 from pf_interfaces.srv import Scan
 from typing import Tuple, Iterable

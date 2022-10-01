@@ -8,7 +8,8 @@ from lpastar_pf.exception.MapInitializationException \
 from lpastar_pf.exception.TimeoutException import TimeoutException
 from typing import Dict
 from pf_interfaces import Goal
-#import sys
+import sys
+import yaml
 
 
 class PathFinder(Node):
@@ -51,9 +52,19 @@ class PathFinder(Node):
 
 def main(args=None):
     rclpy.init(args=args)
+    if len(sys.argv) != 2:
+        print("You must provide path to the yaml configuration file")
+        exit(1)
 
-    # yaml reading
-    pf = PathFinder()
+    params = None    
+    with open(sys.argv[1]) as stream:
+        try:
+            params = ymal.safe_load(stream)
+        except yaml.YAMLError:
+            print("Cannot open " + sys.argv[1])
+            exit(1)
+
+    pf = PathFinder(params)
 
     rclpy.spin(pf)
     rclpy.shutdown()

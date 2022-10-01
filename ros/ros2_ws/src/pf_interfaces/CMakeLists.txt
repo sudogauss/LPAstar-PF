@@ -19,6 +19,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/Position.srv"
   "srv/Scan.srv"
   "srv/Stop.srv"
+  "srv/Goal.srv"
 )
 
 if(BUILD_TESTING)
