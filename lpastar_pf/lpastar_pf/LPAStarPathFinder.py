@@ -2,9 +2,9 @@ from lpastar_pf.GAgent import GAgent
 from lpastar_pf.ASensor import ASensor
 from lpastar_pf.GMap import GMap
 from typing import Type, Tuple, Dict, Iterable, List, Any
-from lpastar_pf.exception.MapInitializationException import MapInitializationException
-from lpastar_pf.exception.PathDoesNotExistException import PathDoesNotExistException
-from lpastar_pf.exception.TimeoutException import TimeoutException
+from lpastar_pf.exceptions import MapInitializationException
+from lpastar_pf.exceptions import PathDoesNotExistException
+from lpastar_pf.exceptions import TimeoutException
 import time
 from lpastar_pf.PriorityQueue import PriorityQueue
 import collections
