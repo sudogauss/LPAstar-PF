@@ -74,7 +74,10 @@ class GMap():
         Sets **obstacles**.
     """
 
-    def __init__(self, params: Dict[str, int], obstacles: Iterable[Tuple[float, float, float]] = None) -> None:
+    def __init__(self,
+                 params: Dict[str, int],
+                 obstacles: Iterable[Tuple[float, float, float]] = None
+                 ) -> None:
         """ Uses __param_getter method to extract data from dictionary.
         Initializes obstacles if provided.
 
@@ -92,16 +95,21 @@ class GMap():
         self.columns = int(self.width / self.resolution)
 
         self.free_case_value = self.__param_getter("free_case_value", params)
-        self.obstacle_case_value = self.__param_getter("obstacle_case_value", params)
+        self.obstacle_case_value = self.__param_getter("obstacle_case_value",
+                                                       params)
 
-        # We must convert real life obstacles ([x, y, w]) to theirs graph representation ([i, j]).
+        # We must convert real life obstacles ([x, y, w])
+        # to theirs graph representation ([i, j]).
         self.obstacles = self.convert_obstacles_to_graph(obstacles)
 
-        self.heuristics_multiplier = self.__param_getter("heuristics_multiplier", params)
+        self.heuristics_multiplier = self \
+            .__param_getter("heuristics_multiplier",
+                            params)
 
     def __param_getter(self, param_name: str, params: Dict[str, Any]) -> Any:
-        """ A function which is used to extract data from dictionary and verify that all
-            required arguments have been provided.
+        """ A function which is used to extract data from
+            dictionary and verify that all required arguments
+            have been provided.
 
         Args:
             param_name (str):
@@ -110,22 +118,31 @@ class GMap():
                 A dictionary to extract from.
 
         Raises:
-            MapInitializationException: Occurs when the required argument is missing
+            MapInitializationException: Occurs when the required
+            argument is missing
 
         Returns:
-            Any: A value extracted from **params** associated to the key **param_name**
+            Any: A value extracted from **params**
+            associated to the key **param_name**
         """
         if param_name in params.keys():
             return params[param_name]
-        raise MapInitializationException("Parameter required, but not provided: " + param_name)
+        raise MapInitializationException(
+            "Parameter required, but not provided: " + param_name)
 
-    def convert_obstacles_to_graph(self, obstacles: Iterable[Tuple[float, float, float]]) -> Iterable[Tuple[int, int]]:
-        """ Converts real life obstacles to theirs' graph representation. Obstacles' representations as graph have no width,
-            they occupy only graph cases/vertices.
+    def convert_obstacles_to_graph(self,
+                                   obstacles:
+                                   Iterable[Tuple[float, float, float]]
+                                   ) -> Iterable[Tuple[int, int]]:
+        """ Converts real life obstacles to theirs' graph representation.
+            Obstacles' representations as graph have no width, they occupy
+            only graph cases/vertices.
 
         Args:
             obstacles (Iterable[Tuple[float, float, float]]):
-                Real life obstacles in **[x, y, w]** format, where **(x, y)** are obstacle's coordinates and **w** is its width
+                Real life obstacles in **[x, y, w]** format,
+                where **(x, y)** are obstacle's coordinates
+                and **w** is its width
 
         Returns:
             Iterable[Tuple[int ,int]]: Graph representation of the obstacles.
@@ -137,8 +154,13 @@ class GMap():
             y = obstacle[1]
             w = obstacle[2] / 2
 
-            square_left_i, square_top_j = self.coors_to_indexes(max(0.0, x - w), max(0.0, y - w))
-            square_right_i, square_bottom_j = self.coors_to_indexes(min(self.width, x + w), min(self.height, y + w))
+            square_left_i, square_top_j = self.coors_to_indexes(
+                max(0.0, x - w),
+                max(0.0, y - w))
+
+            square_right_i, square_bottom_j = self.coors_to_indexes(
+                min(self.width, x + w),
+                min(self.height, y + w))
 
             for i in range(square_left_i, square_right_i + 1):
                 for j in range(square_top_j, square_bottom_j + 1):
@@ -156,7 +178,8 @@ class GMap():
                 Real life y coordinate
 
         Returns:
-            Tuple[int, int]: Indices of the graph's vertex which corresponds to the **(x, y)**
+            Tuple[int, int]: Indices of the graph's vertex
+            which corresponds to the **(x, y)**
         """
         return int(x / self.resolution), int(y / self.resolution)
 
@@ -174,8 +197,11 @@ class GMap():
         """
         return float(i * self.resolution), float(j * self.resolution)
 
-    def get_transition_cost(self, _from: Tuple[int, int], _to: Tuple[int, int]) -> float:
-        """ Gets a transition cost between **_from** and **_to** vertex if and only if they are neighbours.
+    def get_transition_cost(self,
+                            _from: Tuple[int, int],
+                            _to: Tuple[int, int]) -> float:
+        """ Gets a transition cost between **_from** and **_to** vertex if
+            and only if they are neighbours.
 
         Args:
             _from (Tuple[int, int]):
@@ -184,20 +210,31 @@ class GMap():
                 A vertex to go to
 
         Raises:
-            ImpossibleTransitionException: Exception occurs, when **_from** and **_to** are not neighbours
+            ImpossibleTransitionException: Exception occurs,
+            when **_from** and **_to** are not neighbours.
 
         Returns:
             float: A transition cost from **_from** to **_to**
         """
         if abs(_from[0] - _to[0]) > 1 or abs(_from[1] - _to[1]) > 1:
-            raise ImpossibleTransitionException("Impossible transition from (" + str(_from[0])
-                                                + "," + str(_from[1]) + ") to (" + str(_to[0]) + "," + str(_to[1]))
-        if  _to in self.obstacles or _from in self.obstacles:
+            raise ImpossibleTransitionException("Impossible transition from ("
+                                                + str(_from[0])
+                                                + ","
+                                                + str(_from[1])
+                                                + ") to ("
+                                                + str(_to[0])
+                                                + ","
+                                                + str(_to[1]))
+
+        if _to in self.obstacles or _from in self.obstacles:
             return self.obstacle_case_value
         else:
-            return self.free_case_value * sqrt(abs(_from[1] - _to[1]) + abs(_from[0] - _to[0]))
+            return self.free_case_value * \
+                sqrt(abs(_from[1] - _to[1]) +
+                     abs(_from[0] - _to[0]))
 
-    def get_neighbours(self, vertex: Tuple[int, int]) -> Iterable[Tuple[int, int]]:
+    def get_neighbours(self,
+                       vertex: Tuple[int, int]) -> Iterable[Tuple[int, int]]:
         """ Gets all neighbours of the **vertex**
 
         Args:
@@ -225,7 +262,9 @@ class GMap():
                 neighbours.append((i+1, j+1))
         return neighbours
 
-    def get_heurisitcs_cost(self, _from: Tuple[int, int], _to: Tuple[int, int]) -> float:
+    def get_heurisitcs_cost(self,
+                            _from: Tuple[int, int],
+                            _to: Tuple[int, int]) -> float:
         """ Gets heuristics cost to go from **_from** to **_to**
 
         Args:
@@ -237,7 +276,9 @@ class GMap():
         Returns:
             float: The heuristics cost from **_from** to **_to**
         """
-        return self.heuristics_multiplier * sqrt(abs(_from[1] - _to[1]) ** 2 + abs(_from[0] - _to[0]) ** 2)
+        return self.heuristics_multiplier * \
+            sqrt(abs(_from[1] - _to[1]) ** 2 +
+                 abs(_from[0] - _to[0]) ** 2)
 
     def get_resolution(self) -> int:
         """ Gets the resolution
