@@ -18,7 +18,31 @@ CUR=$(PWD)
 
 
 .PHONY: init test build install clean ros_interfaces ros_node \
-		ros_docker ros_run ros_run_docker ros_node_only ros_run_only
+		ros_node_docker ros_run ros_run_docker ros_node_only ros_run_only \
+		help
+
+help:
+	@echo "========================================================================="
+	@echo ""
+	@echo "Use [init] target to initialize venv and install requirements"
+	@echo ""
+	@echo "Use [test] target to initialize venv and run path-finder tests"
+	@echo ""
+	@echo "Use [build] target to run tests and build path-finder package"
+	@echo ""
+	@echo "Use [install] target to build and install path-finder package"
+	@echo ""
+	@echo "Use [clean] target to clean"
+	@echo ""
+	@echo "Use [ros_interfaces] target to build ROS2 interfaces"
+	@echo ""
+	@echo "Use [ros_node | ros_node_docker] target to build ROS2 interfaces and path-finder node with path-finder package installation"
+	@echo ""
+	@echo "Use [ros_node_only] target to build ROS2 interfaces and path-finder node without path-finder package installation"
+	@echo ""
+	@echo "Use [ros_run | ros_run_docker] target to build ROS2 interfaces and path-finder node with path-finder package installation and run it"
+	@echo ""
+	@echo "=========================================================================="
 
 # lpastar_pf package targets
 $(VENV)/bin/activate: requirements.txt
@@ -60,7 +84,7 @@ ros_node_only: ros_interfaces
 	cd ros/ros2_ws; echo $(PWD); $(ROSDEP) install -i --from-path src --rosdistro $(ROS_DISTRO) -y; \
 	$(ROS_BUILD) build --packages-select ros_lpastar_pf; source install/setup.bash; cd $(CUR)
 
-ros_docker:
+ros_node_docker:
 	echo "docker TODO"
 
 ros_run: ros_node
@@ -69,5 +93,3 @@ ros_run: ros_node
 
 ros_run_docker: ros_docker
 	echo "ros run docker TODO"
-
-
