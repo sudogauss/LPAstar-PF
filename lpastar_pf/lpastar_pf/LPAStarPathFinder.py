@@ -2,9 +2,10 @@ from lpastar_pf.GAgent import GAgent
 from lpastar_pf.ASensor import ASensor
 from lpastar_pf.GMap import GMap
 from typing import Type, Tuple, Dict, Iterable, List, Any
-from lpastar_pf.exceptions import MapInitializationException
-from lpastar_pf.exceptions import PathDoesNotExistException
-from lpastar_pf.exceptions import TimeoutException
+from lpastar_pf.pf_exceptions import MapInitializationException
+from lpastar_pf.pf_exceptions import PathDoesNotExistException
+from lpastar_pf.pf_exceptions import TimeoutException
+from lpastar_pf.pf_exceptions import EmptyQueueException
 import time
 from lpastar_pf.PriorityQueue import PriorityQueue
 import collections
@@ -71,7 +72,10 @@ class LPAStarPathFinder:
 
     """
 
-    def __init__(self, agent: Type[GAgent], sensor: Type[ASensor], params: Dict[str, int]):
+    def __init__(self,
+                 agent: Type[GAgent],
+                 sensor: Type[ASensor],
+                 params: Dict[str, int]):
         """ Uses __param_getter method to extract data from dictionary.
         Initializes agent and sensor.
 
@@ -88,14 +92,19 @@ class LPAStarPathFinder:
 
         self.map = GMap(params, obstacles=[])
         self.period = self.__param_getter("period", params)
-        self.infinity = 2 * self.map.obstacle_case_value * (self.map.rows * self.map.columns) ** 2
+        self.infinity = 2 * self.map.obstacle_case_value * \
+            (self.map.rows * self.map.columns) ** 2
         self.timeout = self.__param_getter("timeout", params)
 
         self.goal = None
         self.start = None
 
-        self.g = [[self.infinity for _ in range(self.map.columns)] for _ in range(self.map.rows)]
-        self.rhs = [[self.infinity for _ in range(self.map.columns)] for _ in range(self.map.rows)]
+        self.g = [[self.infinity for _ in range(self.map.columns)]
+                  for _ in range(self.map.rows)]
+
+        self.rhs = [[self.infinity for _ in range(self.map.columns)]
+                    for _ in range(self.map.rows)]
+
         self.discover_order = PriorityQueue()
 
     def reset(self, goal: Tuple[float, float]) -> None:
@@ -106,8 +115,12 @@ class LPAStarPathFinder:
             goal (Tuple[float, float]):
                 The goal vertex
         """
-        self.g = [[self.infinity for _ in range(self.map.columns)] for _ in range(self.map.rows)]
-        self.rhs = [[self.infinity for _ in range(self.map.columns)] for _ in range(self.map.rows)]
+        self.g = [[self.infinity for _ in range(self.map.columns)]
+                  for _ in range(self.map.rows)]
+
+        self.rhs = [[self.infinity for _ in range(self.map.columns)]
+                    for _ in range(self.map.rows)]
+
         self.discover_order = PriorityQueue()
 
         self.goal = self.map.coors_to_indexes(*goal)
@@ -121,8 +134,8 @@ class LPAStarPathFinder:
         """ Entry point function which is responsible to rescan map,
             recalculate optimal path if necessary and update agent.
             First, it calls reset, after that it calls sensor's scan function,
-            converts obstacles to its graph representation and compares them to the
-            previous obstacles. If there is any changes, vertex with
+            converts obstacles to its graph representation and compares them
+            to the previous obstacles. If there is any changes, vertex with
             changed cost are updated and the path is recalculated.
             The path is then shrunk and provided to the agent worker process.
 
@@ -137,38 +150,50 @@ class LPAStarPathFinder:
         while True:
 
             # Break if timeout has occured
-            if time.time_ns() - begin > (timeout * 1e9):
-                raise TimeoutException("Timeout for find_path has been reached")
+            if time.time_ns() - begin > (self.timeout * 1e9):
+                raise TimeoutException("Timeout for \
+                                        find_path has been reached")
 
             # Break if the agent has reached the goal.
             x, y, _ = self.agent.get_position()
-            if (x - goal[0]) ** 2 + (y - goal[1]) <= (self.map.get_resolution() ** 2):
+            if (x - goal[0]) ** 2 + (y - goal[1]) \
+               <= (self.map.get_resolution() ** 2):
+
                 self.agent.stop_trajectory()
                 break
 
             # Sensor scan.
             current_obstacles = self.map.get_obstacles()
-            new_obstacles = self.map.convert_obstacles_to_graph(self.sensor.scan(self.agent.get_position()))
+            new_obstacles = self \
+                .map \
+                .convert_obstacles_to_graph(
+                                self
+                                .sensor
+                                .scan(self.agent.get_position()))
 
-            # If there is difference between previous obstacles and current obstacles.
-            if not collections.Counter(current_obstacles) == collections.Counter(new_obstacles):
+            # If there is difference between previous
+            # obstacles and current obstacles.
+            if not collections.Counter(current_obstacles) \
+                    == collections.Counter(new_obstacles):
 
                 self.map.set_obstacles(new_obstacles)
 
                 # Update vertices with changed cost.
                 for obstacle in new_obstacles:
-                    if not obstacle in current_obstacles:
+                    if obstacle not in current_obstacles:
                         self.__update_vertex(obstacle)
 
                 for obstacle in current_obstacles:
-                    if not obstacle in new_obstacles:
+                    if obstacle not in new_obstacles:
                         self.__update_vertex(obstacle)
 
                 try:
                     # Compute path and shrink it.
                     model_path = self.compute_shortest_path()
                     shrunk_path = self.__shrink_path(model_path)
-                    real_path = map(lambda point: self.map.indexes_to_coors(*point), shrunk_path)
+                    real_path = map(
+                        lambda point: self.map.indexes_to_coors(*point),
+                        shrunk_path)
 
                     self.agent.follow_trajectory(real_path)
                 except PathDoesNotExistException:
@@ -182,7 +207,9 @@ class LPAStarPathFinder:
             self.agent.worker.kill()
             self.agent.stop()
 
-    def __shrink_path(self, model_path: List[Tuple[int, int]]) -> Iterable[Tuple[int, int]]:
+    def __shrink_path(self,
+                      model_path: List[Tuple[int, int]]) \
+            -> Iterable[Tuple[int, int]]:
         """ Takes model_path and adds only key vertices in each
             path direction to avoid agent movements to be jerky.
             Adds only vertices that change agent's direction.
@@ -197,10 +224,12 @@ class LPAStarPathFinder:
         shrunk_path = []
 
         if len(model_path) > 2:
-            direction = abs(model_path[0][0] - model_path[1][0]) + 2 * abs(model_path[0][1] - model_path[1][1])
+            direction = abs(model_path[0][0] - model_path[1][0]) + \
+                        2 * abs(model_path[0][1] - model_path[1][1])
             for i in range(1, len(model_path)):
                 tmp = direction
-                direction = abs(model_path[i-1][0] - model_path[i][0]) + 2 * abs(model_path[i-1][1] - model_path[i][1])
+                direction = abs(model_path[i-1][0] - model_path[i][0]) + \
+                    2 * abs(model_path[i-1][1] - model_path[i][1])
                 if tmp != direction:
                     shrunk_path.append(model_path[i-1])
             shrunk_path.append(model_path[len(model_path) - 1])
@@ -222,7 +251,10 @@ class LPAStarPathFinder:
         Returns:
             Tuple[int, int]: A key used to insert vertex to the priority queue
         """
-        return min(self.g[i][j], self.rhs[i][j]) + self.map.get_heurisitcs_cost((i, j), self.goal), min(self.g[i][j], self.rhs[i][j])
+        return min(self.g[i][j], self.rhs[i][j]) + \
+            self.map.get_heurisitcs_cost((i, j),
+                                         self.goal), min(self.g[i][j],
+                                                         self.rhs[i][j])
 
     def __update_vertex(self, v: Tuple[int, int]) -> None:
         """ Updates the rhs-value of the vertex and reinserts it
@@ -236,7 +268,8 @@ class LPAStarPathFinder:
         """
         i, j = v
         if v != self.start:
-            self.rhs[i][j] = min(list(map(lambda x: self.g[x[0]][x[1]] + self.map.get_transition_cost(x, v),
+            self.rhs[i][j] = min(list(map(lambda x: self.g[x[0]][x[1]]
+                                          + self.map.get_transition_cost(x, v),
                                           self.map.get_neighbours(v))))
         self.discover_order.remove(v)
         if self.g[i][j] != self.rhs[i][j]:
@@ -258,8 +291,10 @@ class LPAStarPathFinder:
             Iterable[Tuple[int, int]]: Returns the path where each
             two consecutive points are neigbours.
         """
-        while ((self.discover_order.top_key() < self.__calculate_key(*self.goal)) or \
-            (self.rhs[self.goal[0]][self.goal[1]] != self.g[self.goal[0]][self.goal[1]])):
+        while ((self.discover_order.top_key()
+                < self.__calculate_key(*self.goal)) or
+                (self.rhs[self.goal[0]][self.goal[1]]
+                    != self.g[self.goal[0]][self.goal[1]])):
             v = None
             try:
                 v = self.discover_order.pop()
@@ -277,17 +312,23 @@ class LPAStarPathFinder:
                 self.__update_vertex(v)
 
         if self.g[self.goal[0]][self.goal[1]] == self.infinity:
-            raise PathDoesNotExistException("Cannot go from " + str(self.start) + " to " + str(self.goal))
+            raise PathDoesNotExistException("Cannot go from "
+                                            + str(self.start)
+                                            + " to "
+                                            + str(self.goal))
 
         s = self.goal
-        cur_vertex = self.map.coors_to_indexes(self.agent.get_position()[0], self.agent.get_position()[1])
+        cur_vertex = self.map.coors_to_indexes(self.agent.get_position()[0],
+                                               self.agent.get_position()[1])
         path = [s]
         while s != cur_vertex:
             neighbours = self.map.get_neighbours(s)
             pred = neighbours[0]
-            min_pred = self.g[pred[0]][pred[1]] + self.map.get_transition_cost(pred, s)
+            min_pred = self.g[pred[0]][pred[1]] + \
+                self.map.get_transition_cost(pred, s)
             for neighbour in neighbours:
-                x = self.g[neighbour[0]][neighbour[1]] + self.map.get_transition_cost(neighbour, s)
+                x = self.g[neighbour[0]][neighbour[1]] + \
+                    self.map.get_transition_cost(neighbour, s)
                 if x < min_pred:
                     min_pred = x
                     pred = neighbour

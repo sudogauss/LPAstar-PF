@@ -1,5 +1,5 @@
 import pytest
-from lpastar_pf.exceptions import EmptyQueueException
+from lpastar_pf.pf_exceptions import EmptyQueueException
 
 
 @pytest.fixture

@@ -63,6 +63,7 @@ build: $(VENV)/bin/activate test
 	$(PYTHON) -m build $(PACKAGE)
 
 install: $(ARTIFACT)
+	$(PIP) uninstall $(PACKAGE)
 	$(PIP) install $(ARTIFACT)
 
 clean:
@@ -89,6 +90,7 @@ ros_node_docker:
 
 ros_run: ros_node
 	export PYTHONPATH=$(PWD)/lpastar_venv/lib/python3.8/site-packages:$(PYTHONPATH); \
+	source ros/ros2_ws/install/setup.bash; \
 	$(ROS) run ros_lpastar_pf ros_lpastar_pf $(ROS_PATH_TO_CONFIG)
 
 ros_run_docker: ros_docker

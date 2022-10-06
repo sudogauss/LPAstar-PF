@@ -3,11 +3,14 @@ from typing import Tuple, List
 import random
 import time
 # from math import sqrt
-from lpastar_pf.exceptions import ImpossibleTransitionException
+from lpastar_pf.pf_exceptions import ImpossibleTransitionException
 
 
 def generate_obstacles() -> List[Tuple[float, float, float]]:
-    obstacles = [(0.0, 1000.0, 24.0), (1500.0, 0.0, 24.0), (3000.0, 1000.0, 24.0), (0.0, 2000.0, 24.0)]
+    obstacles = [(0.0, 1000.0, 24.0),
+                 (1500.0, 0.0, 24.0),
+                 (3000.0, 1000.0, 24.0),
+                 (0.0, 2000.0, 24.0)]
     random.seed(time.time())
     for i in range(50):
         x = random.uniform(0.0, 3000.0)
@@ -65,6 +68,7 @@ def test_indexes_to_coors(mock_map):
 #             assert s == 1000.0
 #         else:
 #             assert s == sqrt(abs(i1 - i2) + abs(j1 - j2))
+
 
 def test_impossible_transition_cost(mock_map):
     for _ in range(100):
